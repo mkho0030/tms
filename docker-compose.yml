@@ -1,0 +1,6 @@
+services:
+  mongo:
+    container_name: mongodb
+    image: mongo:7.0.12
+    ports:
+      - 27017:27017
