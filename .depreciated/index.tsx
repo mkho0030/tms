@@ -1,6 +1,8 @@
 import Head from "next/head";
-import clientPromise from "../lib/mongodb";
+import clientPromise from "../utils/mongodb";
 import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
+import { ReactElement } from "react";
+import Layout from "../pages/layout";
 
 type ConnectionStatus = {
   isConnected: boolean;
@@ -273,3 +275,4 @@ export default function Home({
     </div>
   );
 }
+ 
