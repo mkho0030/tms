@@ -1,39 +1,14 @@
-## Example app using MongoDB
+## FIT3163 Task Management System
 
-[MongoDB](https://www.mongodb.com/) is a general purpose, document-based, distributed database built for modern application developers and for the cloud era. This example will show you how to connect to and use MongoDB as your backend for your Next.js app.
-
-If you want to learn more about MongoDB, visit the following pages:
-
-- [MongoDB Atlas](https://mongodb.com/atlas)
-- [MongoDB Documentation](https://docs.mongodb.com/)
-
-## Deploy your own
-
-Once you have access to the environment variables you'll need, deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example):
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?project-name=with-mongodb&repository-name=with-mongodb&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-mongodb&integration-ids=oac_jnzmjqM10gllKmSrG0SGrHOH)
+This is a task management system that showcases the team's understanding to develop and launch a project under FIT3163
 
 ## How to use
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
-
-```bash
-npx create-next-app --example with-mongodb with-mongodb-app
+### Installing necessary libraries 
+Install neccessary libraries using [pnpm](https://pnpm.io) with this command
 ```
-
-```bash
-yarn create next-app --example with-mongodb with-mongodb-app
+pnpm i
 ```
-
-```bash
-pnpm create next-app --example with-mongodb with-mongodb-app
-```
-
-## Configuration
-
-### Set up a MongoDB database
-
-Set up a MongoDB database either locally or with [MongoDB Atlas for free](https://mongodb.com/atlas).
 
 ### Set up environment variables
 
@@ -47,36 +22,27 @@ Set each variable on `.env.local`:
 
 - `MONGODB_URI` - Your MongoDB connection string. If you are using [MongoDB Atlas](https://mongodb.com/atlas) you can find this by clicking the "Connect" button for your cluster.
 
+- `NEXT_PUBLIC_FIREBASE_[...]` - Your firebase service account details. Please read [Firebase Initalization](https://firebase.google.com/docs/web/setup#add-sdk-and-initialize) for more information.
+
+- `NEXT_PUBLIC_APP_URL` - Your domain url to access the web application
+
+- `ENFORCE_MIDDLEWARE` - Setting this variable to `false` allows for authentication bypass to access the app's APIs
+
 ### Run Next.js in development mode
-
-```bash
-npm install
-npm run dev
-
-# or
-
-yarn install
-yarn dev
+Lastly, run the dev environment using the command below:
+```
+pnpm next dev
 ```
 
 Your app should be up and running on [http://localhost:3000](http://localhost:3000)! If it doesn't work, post on [GitHub discussions](https://github.com/vercel/next.js/discussions).
 
-You will either see a message stating "You are connected to MongoDB" or "You are NOT connected to MongoDB". Ensure that you have provided the correct `MONGODB_URI` environment variable.
-
-When you are successfully connected, you can refer to the [MongoDB Node.js Driver docs](https://mongodb.github.io/node-mongodb-native/3.4/tutorials/collections/) for further instructions on how to query your database.
+## Folder/File structure
+Here are some key folders to allow you to better understand the app's file structure.
+- `components` -  Folder that store the Frontend UI and data schema
+- `logic` - Stores both custom React Hooks and Context. Which allow for the reuse of frontend logic and manage global states. [Click here for more info](https://react.dev/reference/react/hooks)
+- `pages` - Stores both frontend and backend code that will be runned by Nextjs. The `api` folder stores the backend code while the rest of the files are the frontend code. The folder structure has to be strictly followed as this would affect on the app's routing functions [Read here on how routing working in Nextjs](https://nextjs.org/docs/getting-started/project-structure) [Refer to PAGES ROUTER]
+- `utils` - Stores any utility function and functions that connect the app to third party services like Mongodb and Firebase.
 
 ## Deploy on Vercel
 
 You can deploy this app to the cloud with [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
-
-#### Deploy Your Local Project
-
-To deploy your local project to Vercel, push it to GitHub/GitLab/Bitbucket and [import to Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example).
-
-**Important**: When you import your project on Vercel, make sure to click on **Environment Variables** and set them to match your `.env.local` file.
-
-#### Deploy from Our Template
-
-Alternatively, you can deploy using our template by clicking on the Deploy button below.
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?project-name=with-mongodb&repository-name=with-mongodb&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-mongodb&integration-ids=oac_jnzmjqM10gllKmSrG0SGrHOH)
