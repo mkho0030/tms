@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IconButton, Avatar, Toolbar, Popover, MenuItem, MenuList, ListItem, ListItemText, ListItemIcon, Divider } from "@mui/material";
+import { IconButton, Avatar, Toolbar, Popover, MenuItem, MenuList, ListItem, ListItemText, ListItemIcon, Divider, Typography, Box } from "@mui/material";
 import { Notifications, Settings, Logout } from "@mui/icons-material";
 import { useAuth } from "../../logics/providers/AuthContext";
 
@@ -16,13 +16,8 @@ const CustomAppBar = () => {
 
   const open = Boolean(anchorEl);
 
-  const { signOutUser } = useAuth();
+  const { signOutUser, user } = useAuth();
 
-  // Sample user data
-  const user = {
-    username: 'JohnDoe',
-    email: 'john.doe@example.com'
-  };
 
   const handleLogout = () => {
     handleClose();
@@ -45,7 +40,7 @@ const CustomAppBar = () => {
         </IconButton>
         {/* Account */}
         <IconButton onClick={handleOnClick}>
-          <Avatar sx={{ width: 24, height: 24 }} />
+          <Avatar sx={{ width: 24, height: 24 }} src={user?.photoURL || ''}/>
         </IconButton>
       </Toolbar>
 
@@ -61,27 +56,33 @@ const CustomAppBar = () => {
           vertical: 'top',
           horizontal: 'right',
         }}
+
       >
-        <MenuList>
-          <ListItem>
-			<Avatar sx={{ width: 40, height: 40, marginRight: 2}} />
+        <Box sx={{ p: 2, width: 300 }}>
+          <Typography variant="subtitle1" align="left" sx={{ mb: 0}}>
+            Account
+          </Typography>
+        </Box>
+        <ListItem>
+			<Avatar sx={{ width: 40, height: 40, marginRight: 2}} src={user?.photoURL || ''}/>
             <ListItemText
-              primary={user.username}
-              secondary={user.email}
+              primary={user?.displayName}
+              secondary={user?.email}
             />
           </ListItem>
+        <MenuList>
           <MenuItem onClick={handleClose}>
+            <ListItemText primary="Manage Account" />
             <ListItemIcon>
               <Settings />
             </ListItemIcon>
-            <ListItemText primary="Account Settings" />
           </MenuItem>
 		  <Divider />
           <MenuItem onClick={handleLogout}>
+            <ListItemText primary="Logout" />
             <ListItemIcon>
               <Logout />
             </ListItemIcon>
-            <ListItemText primary="Logout" />
           </MenuItem>
         </MenuList>
       </Popover>
