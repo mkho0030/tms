@@ -4,6 +4,7 @@ import {
 	getAuth,
 	signInWithEmailAndPassword,
 	signInWithPopup,
+	signOut,
 } from "firebase/auth";
 import React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -22,6 +23,7 @@ interface AuthContextType {
 	loginUsingEmail: (values: z.infer<typeof loginSchema>) => void;
 	loginUsingGoogle: () => void;
 	registerUsingEmail: (values: z.infer<typeof registerSchema>) => void;
+	signOutUser: () => void;
 }
 
 const initialState: AuthContextType = {
@@ -30,6 +32,7 @@ const initialState: AuthContextType = {
 	loginUsingEmail: async (values: z.infer<typeof loginSchema>) => null,
 	loginUsingGoogle: async () => null,
 	registerUsingEmail: async (values: z.infer<typeof registerSchema>) => null,
+	signOutUser: async () => null,
 };
 
 const AuthContext = createContext<AuthContextType>(initialState);
@@ -61,6 +64,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 		registerUsingEmail: (values: z.infer<typeof registerSchema>) => {
 			registerUsingEmail(values);
 		},
+		signOutUser: () => {
+			signOutUser();
+		}
 	};
 
 	const loginUsingEmail = async (values: z.infer<typeof loginSchema>) => {
@@ -111,6 +117,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 				type: "error",
 			});
 			setLoading(false);
+		}
+	};
+
+	const signOutUser = async () => {
+		try {
+			await signOut(auth);
+			deleteCookie("auth_token");
+			setIsAuth(false);
+			setToast({
+				message: "Signed out successfully",
+				type: "success",
+			});
+			router.push("/auth/login");
+		} catch (error) {
+			setToast({
+				message: (error as Error).message,
+				type: "error",
+			});
 		}
 	};
 
