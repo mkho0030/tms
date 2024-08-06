@@ -6,9 +6,9 @@ export default async function handler(
 ) {
   // create user
   if (req.method === "POST") {
-    const { uid, name, email, imageUrl } = JSON.parse(req.body);
+    const { uid, name, email, photoUrl } = JSON.parse(req.body);
     //TODO: create user in db. don't bother checking for existing emails
-    res.json({ uid, name, email, imageUrl });
+    res.json({ uid, name, email, photoUrl });
   }
   // get user info, settings and notifications
   if (req.method === "GET") {
@@ -18,8 +18,8 @@ export default async function handler(
   }
   // update user info and settings
   if (req.method === "PUT") {
-    const { uid, name, email, imageUrl, settings } = JSON.parse(req.body);
+    const { uid, name, email, photoUrl } = JSON.parse(req.body);
     //TODO: update user in db
-    res.json({ uid, name, email, imageUrl, settings });
+    res.json({ uid, name, email, photoUrl });
   }
 }
