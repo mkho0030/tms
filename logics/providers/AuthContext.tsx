@@ -122,6 +122,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 				user
 					.getIdToken()
 					.then((idToken) => {
+						console.log(idToken);
+						
 						setCookie("auth_token", idToken);
 						setIsAuth(true);
 						setLoading(false);
