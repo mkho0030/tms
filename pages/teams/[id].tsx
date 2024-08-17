@@ -1,9 +1,17 @@
-import React from 'react'
+import { NextPage } from 'next';
+import React from 'react';
+import CustomToolbar from '../../components/Toolbar';
+import DropdownsAndButtons from '../../components/TeamsPage/DropdownsAndButtons';
+import TaskTable from '../../components/TeamsPage/TaskTable';
 
-const TeamPage = () => {
+const Teams: NextPage = () => {
   return (
-    <div>TeamPage</div>
-  )
-}
+    <>
+      <CustomToolbar />
+      <DropdownsAndButtons />
+      <TaskTable />
+    </>
+  );
+};
 
-export default TeamPage
+export default Teams;
