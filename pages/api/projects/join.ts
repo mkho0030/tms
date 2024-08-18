@@ -1,11 +1,17 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { auth } from "../../../utils/firebase-admin";
+import { getRequestUser } from "../../../utils/auth-utils";
 import { addUserToProject } from "../../../utils/mongo-utils";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const uid = await getRequestUser(req);
+  if (!uid) {
+    res.status(401);
+    return;
+  }
+
   if (req.method === "POST") {
     const id = req.query.id;
     if (typeof id !== "string") {
@@ -13,15 +19,11 @@ export default async function handler(
       return;
     }
 
-    const token = req.cookies?.auth_token ?? "";
-    const decodeToken = await auth.verifyIdToken(token);
-    const uid = decodeToken.uid;
-
     const success = await addUserToProject(id, uid);
     if (!success) {
       res.status(500).send({ error: "Failed to join project" });
     }
 
-    res.redirect("/");
+    res.redirect(307, "/"); // TODO: Replace / with path to correct project page
   }
 }

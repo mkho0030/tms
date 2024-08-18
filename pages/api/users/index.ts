@@ -11,6 +11,7 @@ export default async function handler(
     await setUser({ uid, name, email, photoUrl });
     res.json({ uid, name, email, photoUrl });
   }
+
   // get user info, settings and notifications
   if (req.method === "GET") {
     const uid = req.query.uid;
@@ -19,6 +20,9 @@ export default async function handler(
       return;
     }
     const user = await getUser(uid);
+    if (!user) {
+      res.status(404).send({ error: "" });
+    }
     res.json(user);
   }
 }
