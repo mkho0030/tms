@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { auth } from "../../../utils/firebase-admin";
+import { addUserToProject, createProject } from "../../../utils/mongo-utils";
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,9 +13,9 @@ export default async function handler(
     const decodeToken = await auth.verifyIdToken(token);
     const uid = decodeToken.uid;
 
-    //TODO: create project with name
-    //TODO: add uid to created project
+    const newProject = await createProject(name);
+    await addUserToProject(newProject._id, uid);
 
-    res.json({ name }); //TODO: return created project id
+    res.json(newProject);
   }
 }
