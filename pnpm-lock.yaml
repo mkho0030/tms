@@ -38,9 +38,6 @@ importers:
       next:
         specifier: latest
         version: 14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      next-firebase-auth-edge:
-        specifier: 1.6.2
-        version: 1.6.2(next@14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -796,10 +793,6 @@ packages:
   convert-source-map@1.9.0:
     resolution: {integrity: sha512-ASFBup0Mz1uyiIjANan1jzLQami9z1PoYSZCiiYW2FczPbenXc45FZdBZLzOT+r6+iciuEModtmCti+hjaAk0A==}
 
-  cookie@0.5.0:
-    resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
-    engines: {node: '>= 0.6'}
-
   cookie@0.6.0:
     resolution: {integrity: sha512-U71cyTamuh1CRNCfpGY6to28lxvNwPG4Guz/EVjgf3Jmzv0vlDp1atT9eS5dDjMYHucpHbWns6Lwf3BKz6svdw==}
     engines: {node: '>= 0.6'}
@@ -994,9 +987,6 @@ packages:
   jose@4.15.9:
     resolution: {integrity: sha512-1vUQX+IdDMVPj4k8kOxgUqlcK518yluMuGZwqlr44FS1ppZB/5GWh4rZG89erpOBOJjU/OBsnCVFfapsRz6nEA==}
 
-  jose@5.6.3:
-    resolution: {integrity: sha512-1Jh//hEEwMhNYPDDLwXHa2ePWgWiFNNUadVmguAAw2IJ6sj9mNxV5tGXJNqlMkJAybF6Lgw1mISDxTePP/187g==}
-
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -1131,12 +1121,6 @@ packages:
     resolution: {integrity: sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
-
-  next-firebase-auth-edge@1.6.2:
-    resolution: {integrity: sha512-beRcgzxU8nvJ5grUYFRcgECr9pLzT5MaTSxi+yRZJsbYnYPbWZSoh0PmXB+WiDGAYOoWYLyerSSWmuH+YSKdsQ==}
-    engines: {node: '>=16.0.0 <22.0.0', npm: '>=8.0.0 <11.0.0', yarn: '>=1.22.0 <2.0.0'}
-    peerDependencies:
-      next: ^13.5.0 || ^14.0.0
 
   next@14.2.5:
     resolution: {integrity: sha512-0f8aRfBVL+mpzfBjYfQuLWh2WyAwtJXCRfkPF4UJ5qd2YwrHczsrSzXU4tRMV0OAxR8ZJZWPFn6uhSC56UTsLA==}
@@ -2379,8 +2363,6 @@ snapshots:
 
   convert-source-map@1.9.0: {}
 
-  cookie@0.5.0: {}
-
   cookie@0.6.0: {}
 
   cookies-next@4.2.1:
@@ -2427,6 +2409,7 @@ snapshots:
   encoding@0.1.13:
     dependencies:
       iconv-lite: 0.6.3
+    optional: true
 
   end-of-stream@1.4.4:
     dependencies:
@@ -2639,6 +2622,7 @@ snapshots:
   iconv-lite@0.6.3:
     dependencies:
       safer-buffer: 2.1.2
+    optional: true
 
   idb@7.1.1: {}
 
@@ -2662,8 +2646,6 @@ snapshots:
     optional: true
 
   jose@4.15.9: {}
-
-  jose@5.6.3: {}
 
   js-tokens@4.0.0: {}
 
@@ -2788,13 +2770,6 @@ snapshots:
   ms@2.1.2: {}
 
   nanoid@3.3.7: {}
-
-  next-firebase-auth-edge@1.6.2(next@14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
-    dependencies:
-      cookie: 0.5.0
-      encoding: 0.1.13
-      jose: 5.6.3
-      next: 14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   next@14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -2965,7 +2940,8 @@ snapshots:
 
   safe-buffer@5.2.1: {}
 
-  safer-buffer@2.1.2: {}
+  safer-buffer@2.1.2:
+    optional: true
 
   safevalues@0.6.0: {}
 
