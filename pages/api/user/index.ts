@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { getUser, setUser } from "../../../utils/mongo-utils";
 
 export default async function handler(
   req: NextApiRequest,
@@ -7,13 +8,13 @@ export default async function handler(
   // create user
   if (req.method === "POST") {
     const { uid, name, email, photoUrl } = JSON.parse(req.body);
-    //TODO: upsert user in db. don't bother checking for existing emails
+    await setUser({ uid, name, email, photoUrl });
     res.json({ uid, name, email, photoUrl });
   }
   // get user info, settings and notifications
   if (req.method === "GET") {
     const { uid } = JSON.parse(req.body);
-    //TODO: get user from db and return details
-    res.json({ uid }); //TODO: add rest of fields from db
+    const user = await getUser(uid);
+    res.json(user);
   }
 }
