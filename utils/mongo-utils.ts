@@ -63,7 +63,7 @@ export const addUserToProject = async (
     { _id: projectId },
     { $addToSet: { members: userId } }
   );
-  return result.modifiedCount === 1;
+  return result.matchedCount === 1;
 };
 
 export const getProjectsForUser = async (

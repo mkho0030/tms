@@ -8,22 +8,20 @@ export default async function handler(
 ) {
   const uid = await getRequestUser(req);
   if (!uid) {
-    res.status(401);
-    return;
+    return res.status(401);
   }
 
   if (req.method === "POST") {
     const id = req.query.id;
     if (typeof id !== "string") {
-      res.status(400).send({ error: "Invalid project ID" });
-      return;
+      return res.status(400).send({ error: "Invalid project ID" });
     }
 
     const success = await addUserToProject(id, uid);
     if (!success) {
-      res.status(500).send({ error: "Failed to join project" });
+      return res.status(500).send({ error: "Failed to join project" });
     }
 
-    res.redirect(307, "/"); // TODO: Replace / with path to correct project page
+    return res.redirect(307, `/teams/${id}`); // TODO: Replace / with path to correct project page
   }
 }

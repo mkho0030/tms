@@ -12,22 +12,21 @@ export default async function handler(
 ) {
   const uid = await getRequestUser(req);
   if (!uid) {
-    res.status(401);
-    return;
+    return res.status(401);
   }
 
   // create team
   if (req.method === "POST") {
-    const { name } = JSON.parse(req.body);
+    const { name } = req.body;
     const newProject = await createProject(name);
     await addUserToProject(newProject._id, uid);
 
-    res.status(201).json(newProject);
+    return res.status(201).json(newProject);
   }
 
   // get teams that user belongs to
-  if (req.method === "POST") {
+  if (req.method === "GET") {
     const projects = await getProjectsForUser(uid);
-    return projects;
+    return res.status(200).json(projects);
   }
 }
