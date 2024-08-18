@@ -13,7 +13,11 @@ export default async function handler(
   }
   // get user info, settings and notifications
   if (req.method === "GET") {
-    const { uid } = JSON.parse(req.body);
+    const uid = req.query.uid;
+    if (typeof uid !== "string") {
+      res.status(400).send({ error: "Invalid user ID" });
+      return;
+    }
     const user = await getUser(uid);
     res.json(user);
   }
