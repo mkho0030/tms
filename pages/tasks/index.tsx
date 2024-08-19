@@ -1,12 +1,8 @@
-import { Grid } from '@mui/material'
-import React from 'react'
+import { Grid } from "@mui/material";
+import React from "react";
 
 const MyTasks = () => {
-  return (
-    <Grid>
-      MyTasks
-    </Grid>
-  )
-}
+  return <Grid>MyTasks</Grid>;
+};
 
-export default MyTasks
+export default MyTasks;

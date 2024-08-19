@@ -10,10 +10,10 @@ const firebaseConfig = {
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
   storageBucket: "tms-grah.appspot.com",
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: "1:930390378193:web:c2f269b08d25028e11e7f0"
+  appId: "1:930390378193:web:c2f269b08d25028e11e7f0",
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig, 'client');
+const app = initializeApp(firebaseConfig, "client");
 
-export default app
+export default app;

@@ -8,18 +8,17 @@ import { Box, Grid } from "@mui/material";
 
 // TODO: change and set props
 const Layout: React.FC<any> = ({ children }) => {
-
-	return (
-		<Box sx={{display: 'flex', justifyContent:'flex-end'}}>
-			<AppDrawer />
-      <Box sx={{width: `calc(100% - ${drawerWidth}px)`}}>
+  return (
+    <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+      <AppDrawer />
+      <Box sx={{ width: `calc(100% - ${drawerWidth}px)` }}>
         <AppBar />
-        <Grid container pl={'24px'} pr={'24px'}>
-           {children}
+        <Grid container pl={"24px"} pr={"24px"}>
+          {children}
         </Grid>
       </Box>
-		</Box>
-	);
+    </Box>
+  );
 };
 
 export default Layout;
