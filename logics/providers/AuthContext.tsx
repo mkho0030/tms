@@ -1,10 +1,10 @@
 import {
-	browserSessionPersistence,
-	createUserWithEmailAndPassword,
-	getAuth,
-	signInWithEmailAndPassword,
-	signInWithPopup,
-	signOut,
+  browserSessionPersistence,
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
 } from "firebase/auth";
 import React from "react";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -18,214 +18,220 @@ import { GoogleAuthProvider } from "firebase/auth";
 import { useRouter } from "next/router";
 
 interface User {
-	displayName: string | null;
-	email: string | null;
-	photoURL: string | null;
+  displayName: string | null;
+  email: string | null;
+  photoURL: string | null;
 }
 
 interface AuthContextType {
-	loading: boolean;
-	isAuth: boolean;
-	user: User | null;
-	loginUsingEmail: (values: z.infer<typeof loginSchema>) => void;
-	loginUsingGoogle: () => void;
-	registerUsingEmail: (values: z.infer<typeof registerSchema>) => void;
-	signOutUser: () => void;
+  loading: boolean;
+  isAuth: boolean;
+  user: User | null;
+  loginUsingEmail: (values: z.infer<typeof loginSchema>) => void;
+  loginUsingGoogle: () => void;
+  registerUsingEmail: (values: z.infer<typeof registerSchema>) => void;
+  signOutUser: () => void;
 }
 
 const initialState: AuthContextType = {
-	loading: false,
-	isAuth: false,
-	user: null,
-	loginUsingEmail: async (values: z.infer<typeof loginSchema>) => null,
-	loginUsingGoogle: async () => null,
-	registerUsingEmail: async (values: z.infer<typeof registerSchema>) => null,
-	signOutUser: async () => null,
+  loading: false,
+  isAuth: false,
+  user: null,
+  loginUsingEmail: async (values: z.infer<typeof loginSchema>) => null,
+  loginUsingGoogle: async () => null,
+  registerUsingEmail: async (values: z.infer<typeof registerSchema>) => null,
+  signOutUser: async () => null,
 };
 
 const AuthContext = createContext<AuthContextType>(initialState);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
-	children,
+  children,
 }) => {
-	const [loading, setLoading] = useState(true);
-	const [isAuth, setIsAuth] = useState(true);
-	const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isAuth, setIsAuth] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
 
-	const auth = getAuth(app);
-	auth.setPersistence(browserSessionPersistence);
+  const auth = getAuth(app);
+  auth.setPersistence(browserSessionPersistence);
 
-	const provider = new GoogleAuthProvider();
+  const provider = new GoogleAuthProvider();
 
-	const { setToast } = useToast();
-	const router = useRouter();
+  const { setToast } = useToast();
+  const router = useRouter();
 
-	const value = {
-		loading,
-		isAuth,
-		user,
-		loginUsingEmail: (values: z.infer<typeof loginSchema>) => {
-			loginUsingEmail(values);
-		},
-		loginUsingGoogle: () => {
-			loginUsingGoogle();
-		},
-		registerUsingEmail: (values: z.infer<typeof registerSchema>) => {
-			registerUsingEmail(values);
-		},
-		signOutUser: () => {
-			signOutUser();
-		}
-	};
+  const value = {
+    loading,
+    isAuth,
+    user,
+    loginUsingEmail: (values: z.infer<typeof loginSchema>) => {
+      loginUsingEmail(values);
+    },
+    loginUsingGoogle: () => {
+      loginUsingGoogle();
+    },
+    registerUsingEmail: (values: z.infer<typeof registerSchema>) => {
+      registerUsingEmail(values);
+    },
+    signOutUser: () => {
+      signOutUser();
+    },
+  };
 
-	const loginUsingEmail = async (values: z.infer<typeof loginSchema>) => {
-		try {
-			setLoading(true);
+  const loginUsingEmail = async (values: z.infer<typeof loginSchema>) => {
+    try {
+      setLoading(true);
 
-			const { email, password } = values;
+      const { email, password } = values;
 
-			const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
-			setUser({
-				displayName: userCredential.user.displayName,
-				email: userCredential.user.email,
-				photoURL: userCredential.user.photoURL,
-			});
+      setUser({
+        displayName: userCredential.user.displayName,
+        email: userCredential.user.email,
+        photoURL: userCredential.user.photoURL,
+      });
 
-			router.push("/");
-		} catch (error) {
-			setToast({
-				message: (error as Error).message,
-				type: "error",
-			});
-			setLoading(false);
-		}
-	};
+      router.push("/");
+    } catch (error) {
+      setToast({
+        message: (error as Error).message,
+        type: "error",
+      });
+      setLoading(false);
+    }
+  };
 
-	const loginUsingGoogle = async () => {
-		try {
-			setLoading(true);
+  const loginUsingGoogle = async () => {
+    try {
+      setLoading(true);
 
-			const result = await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
 
-			setUser({
-				displayName: result.user.displayName,
-				email: result.user.email,
-				photoURL: result.user.photoURL,
-			});
+      setUser({
+        displayName: result.user.displayName,
+        email: result.user.email,
+        photoURL: result.user.photoURL,
+      });
 
-			router.push("/");
-		} catch (error) {
-			setToast({
-				message: (error as Error).message,
-				type: "error",
-			});
-			setLoading(false);
-		}
-	};
+      router.push("/");
+    } catch (error) {
+      setToast({
+        message: (error as Error).message,
+        type: "error",
+      });
+      setLoading(false);
+    }
+  };
 
-	const registerUsingEmail = async (values: z.infer<typeof registerSchema>) => {
-		try {
-			setLoading(true);
-			const { email, password } = values;
-			const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const registerUsingEmail = async (values: z.infer<typeof registerSchema>) => {
+    try {
+      setLoading(true);
+      const { email, password } = values;
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
-			setUser({
-				displayName: userCredential.user.displayName,
-				email: userCredential.user.email,
-				photoURL: userCredential.user.photoURL,
-			});
+      setUser({
+        displayName: userCredential.user.displayName,
+        email: userCredential.user.email,
+        photoURL: userCredential.user.photoURL,
+      });
 
-			router.push("/auth/login");
-			setToast({
-				message: "Account created successfully!",
-				type: "success",
-			});
-		} catch (error) {
-			setToast({
-				message: (error as Error).message,
-				type: "error",
-			});
-			setLoading(false);
-		}
-	};
+      router.push("/auth/login");
+      setToast({
+        message: "Account created successfully!",
+        type: "success",
+      });
+    } catch (error) {
+      setToast({
+        message: (error as Error).message,
+        type: "error",
+      });
+      setLoading(false);
+    }
+  };
 
-	const signOutUser = async () => {
-		try {
-			await signOut(auth);
-			deleteCookie("auth_token");
-			setIsAuth(false);
-			setUser(null);
-			setToast({
-				message: "Signed out successfully",
-				type: "success",
-			});
-			router.push("/auth/login");
-		} catch (error) {
-			setToast({
-				message: (error as Error).message,
-				type: "error",
-			});
-		}
-	};
+  const signOutUser = async () => {
+    try {
+      await signOut(auth);
+      deleteCookie("auth_token");
+      setIsAuth(false);
+      setUser(null);
+      setToast({
+        message: "Signed out successfully",
+        type: "success",
+      });
+      router.push("/auth/login");
+    } catch (error) {
+      setToast({
+        message: (error as Error).message,
+        type: "error",
+      });
+    }
+  };
 
-	useEffect(() => {
-		setLoading(true);
-		auth.onAuthStateChanged(function handleAuth(user) {
-			if (user) {
-				setUser({
-					displayName: user.displayName,
-					email: user.email,
-					photoURL: user.photoURL,
-				  });
+  useEffect(() => {
+    setLoading(true);
+    auth.onAuthStateChanged(function handleAuth(user) {
+      if (user) {
+        setUser({
+          displayName: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+        });
 
-				user
-					.getIdToken()
-					.then((idToken) => {
-						console.log(idToken);
-						
-						setCookie("auth_token", idToken);
-						setIsAuth(true);
-						setLoading(false);
-					})
-					.catch((error) => {
-						setToast({
-							message: error.message,
-							type: "error",
-						});
-						setIsAuth(false);
-						setLoading(false);
-					});
-			} else {
-				setToast({
-					message: "Not Authenticated",
-					type: "error",
-				});
-				console.log("Not authenticated");
-				setIsAuth(false);
-				setLoading(false);
-				setUser(null);
-			}
-		});
-		return () => {};
-	}, [auth]);
+        user
+          .getIdToken()
+          .then((idToken) => {
+            setCookie("auth_token", idToken);
+            setIsAuth(true);
+            setLoading(false);
+          })
+          .catch((error) => {
+            setToast({
+              message: error.message,
+              type: "error",
+            });
+            setIsAuth(false);
+            setLoading(false);
+          });
+      } else {
+        setToast({
+          message: "Not Authenticated",
+          type: "error",
+        });
+        console.log("Not authenticated");
+        setIsAuth(false);
+        setLoading(false);
+        setUser(null);
+      }
+    });
+    return () => {};
+  }, [auth]);
 
-	useEffect(() => {
-		if (!isAuth && !loading) {
-			deleteCookie("auth_token");
-			router.push("/auth/login");
-		}
-		return () => {};
-	}, [isAuth]);
+  useEffect(() => {
+    if (!isAuth && !loading) {
+      deleteCookie("auth_token");
+      router.push("/auth/login");
+    }
+    return () => {};
+  }, [isAuth]);
 
-	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
-	const context = useContext(AuthContext);
+  const context = useContext(AuthContext);
 
-	if (context === undefined)
-		throw new Error("useAuth must be used within AuthProvider");
+  if (context === undefined)
+    throw new Error("useAuth must be used within AuthProvider");
 
-	return context;
+  return context;
 };

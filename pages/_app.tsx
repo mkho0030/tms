@@ -7,36 +7,32 @@ import Layout from "./layout";
 
 // Typing to integrate layouts with pages
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
-  getLayout?: (page: ReactElement) => ReactNode
-} 
+  getLayout?: (page: ReactElement) => ReactNode;
+};
 type AppPropsWithLayout = AppProps & {
-  Component: NextPageWithLayout
-}
+  Component: NextPageWithLayout;
+};
 
 //Component for the default layout
 const mainLayout = (page: ReactElement) => {
-    return (
-      <Layout>
-        {page}
-      </Layout>
-    )
-}
+  return <Layout>{page}</Layout>;
+};
 
 export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  const getLayout = Component.getLayout || mainLayout
+  const getLayout = Component.getLayout || mainLayout;
 
-	return (
-		<Providers>
-			<CssBaseline />
+  return (
+    <Providers>
+      <CssBaseline />
       {getLayout(<Component {...pageProps} />)}
-		</Providers>
-	);
+    </Providers>
+  );
 }
 
 MyApp.getInitialProps = async (
-	context: AppContext
+  context: AppContext
 ): Promise<AppInitialProps> => {
-	const ctx = await App.getInitialProps(context);
+  const ctx = await App.getInitialProps(context);
 
-	return { ...ctx };
+  return { ...ctx };
 };
