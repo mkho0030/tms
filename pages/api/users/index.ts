@@ -7,14 +7,21 @@ export default async function handler(
 ) {
   // create user
   if (req.method === "POST") {
-    const { uid, name, email, photoUrl } = JSON.parse(req.body);
+    const { uid, name, email, photoUrl } = req.body;
     await setUser({ uid, name, email, photoUrl });
-    res.json({ uid, name, email, photoUrl });
+    return res.status(200).json({ uid, name, email, photoUrl });
   }
+
   // get user info, settings and notifications
   if (req.method === "GET") {
-    const { uid } = JSON.parse(req.body);
+    const uid = req.query.uid;
+    if (typeof uid !== "string") {
+      return res.status(400).send({ error: "Invalid user ID" });
+    }
     const user = await getUser(uid);
-    res.json(user);
+    if (!user) {
+      return res.status(404).send({ error: "" });
+    }
+    return res.status(200).json(user);
   }
 }

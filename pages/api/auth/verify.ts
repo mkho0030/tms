@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getAuth } from "firebase-admin/auth";
-import admin from "../../../utils/firebase-admin";
+import { auth } from "../../../utils/firebase-admin";
 
 type ResponseData = {
   message: string;
@@ -16,7 +16,7 @@ export default async function handler(
     // Create session Token cookie
 
     try {
-      const decodeToken = await getAuth(admin).verifyIdToken(idToken.value);
+      const decodeToken = await auth.verifyIdToken(idToken.value);
       const uid = decodeToken.uid;
 
       console.info(uid);
