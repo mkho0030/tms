@@ -1,26 +1,37 @@
-import React, { useState } from 'react';
-import { Box, Button, FormControl, Select, InputLabel, TextField, MenuItem } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import React, { useState } from "react";
+import {
+  Box,
+  Button,
+  FormControl,
+  Select,
+  InputLabel,
+  TextField,
+  MenuItem,
+  Toolbar,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 const DropdownsAndButtons = () => {
-  const [searchText, setSearchText] = useState<string>('');
-  const [selected2, setSelected2] = useState<string>('');
-  const [selected3, setSelected3] = useState<string>('');
-  const [selected4, setSelected4] = useState<string>('');
+  const [searchText, setSearchText] = useState<string>("");
+  const [selected2, setSelected2] = useState<string>("");
+  const [selected3, setSelected3] = useState<string>("");
+  const [selected4, setSelected4] = useState<string>("");
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-      <Box sx={{ display: 'flex', gap: 2, flexGrow: 1 }}>
-        <FormControl sx={{ minWidth: 210 }}>
-          <TextField
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            variant="outlined"
-            label="Search"
-            sx={{ minWidth: 210 }}
-          />
-        </FormControl>
-        <FormControl sx={{ minWidth: 140 }}>
+    <Toolbar
+      variant="dense"
+      sx={{ display: "flex", width: "100%", py: 3, gap: 4 }}
+    >
+      <Box sx={{ display: "flex", gap: 2, flex: "1 0 auto" }}>
+        <TextField
+          sx={{ width: "40%", maxWidth: "250px" }}
+          size="small"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          variant="outlined"
+          label="Search"
+        />
+        <FormControl sx={{ width: "20%" }} size="small">
           <InputLabel id="dropdown2">Assigned To</InputLabel>
           <Select
             labelId="dropdown2"
@@ -32,7 +43,7 @@ const DropdownsAndButtons = () => {
             <MenuItem value="all">All</MenuItem>
           </Select>
         </FormControl>
-        <FormControl sx={{ minWidth: 120 }}>
+        <FormControl sx={{ width: "20%", maxWidth: "128px" }} size="small">
           <InputLabel id="dropdown3">Due By</InputLabel>
           <Select
             labelId="dropdown3"
@@ -48,7 +59,7 @@ const DropdownsAndButtons = () => {
             <MenuItem value="this_month">This Month</MenuItem>
           </Select>
         </FormControl>
-        <FormControl sx={{ minWidth: 180 }}>
+        <FormControl size="small" sx={{ width: "20%", maxWidth: "168px" }}>
           <InputLabel id="dropdown4">Progress Status</InputLabel>
           <Select
             labelId="dropdown4"
@@ -63,23 +74,11 @@ const DropdownsAndButtons = () => {
           </Select>
         </FormControl>
       </Box>
-      <Button
-        variant="outlined"
-        sx={{
-          borderColor: 'blue',
-          color: 'blue',
-          backgroundColor: 'white',
-          '&:hover': {
-            borderColor: 'darkblue',
-            color: 'darkblue',
-            backgroundColor: 'lightgray',
-          },
-        }}
-      >
+      <Button sx={{ height: "40px" }} variant="outlined" size="medium">
         <AddIcon />
         Add new task
       </Button>
-    </Box>
+    </Toolbar>
   );
 };
 

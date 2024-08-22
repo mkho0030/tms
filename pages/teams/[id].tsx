@@ -1,14 +1,12 @@
-import { NextPage } from 'next';
-import React from 'react';
-import CustomToolbar from '../../components/Toolbar';
-import DropdownsAndButtons from '../../components/TeamsPage/DropdownsAndButtons';
-import TaskTable from '../../components/TeamsPage/TaskTable';
+import { NextPage } from "next";
+import React from "react";
+import CustomToolbar from "../../components/Toolbar";
+import TaskTable from "../../components/TaskTable";
 
 const Teams: NextPage = () => {
   return (
     <>
-      <CustomToolbar />
-      <DropdownsAndButtons />
+      <CustomToolbar isTask={false} />
       <TaskTable />
     </>
   );

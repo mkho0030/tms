@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
 
 const useField = () => {
-  const [isPassswordVisible, setIsPasswordVisible] = useState(false)
+  const [isPassswordVisible, setIsPasswordVisible] = useState(false);
 
-  return {isPassswordVisible, setIsPasswordVisible}
-}
+  return { isPassswordVisible, setIsPasswordVisible };
+};
 
-export default useField
+export default useField;
