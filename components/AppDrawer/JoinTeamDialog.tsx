@@ -1,4 +1,4 @@
-import { Close } from "@mui/icons-material";
+import { Close, OpenInNew } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -7,28 +7,28 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-  TextField,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { joinTeamSchema } from "../Form/teamSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import useTeam from "../../logics/hooks/useTeam";
 import { TextFieldElement } from "react-hook-form-mui";
 import { useRouter } from "next/router";
 import { useToast } from "../../logics/providers/ToastContext";
+import useIsOpen from "../../logics/hooks/useIsOpen";
 
-const JoinTeamDialog: React.FC<{
-  isOpen: boolean;
-  handleOnOpen?: () => void;
-  handleOnClose: () => void;
-}> = ({ isOpen, handleOnOpen, handleOnClose }) => {
+const JoinTeamDialog: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
-  const router = useRouter();
+  const { isOpen, handleOpen, handleClose } = useIsOpen();
 
+  const router = useRouter();
   const { setToast } = useToast();
+
   const { control, handleSubmit } = useForm<z.infer<typeof joinTeamSchema>>({
     resolver: zodResolver(joinTeamSchema),
   });
@@ -57,7 +57,7 @@ const JoinTeamDialog: React.FC<{
         type: "success",
       });
       setLoading(false);
-      handleOnClose();
+      handleClose();
 
       router.push(`/teams/${id}`);
     } catch (error) {
@@ -70,40 +70,49 @@ const JoinTeamDialog: React.FC<{
   };
 
   return (
-    <Dialog
-      open={isOpen}
-      maxWidth="sm"
-      fullWidth
-      id="join-form"
-      PaperProps={{
-        component: "form",
-        onSubmit: handleSubmit(handleOnSubmit),
-      }}
-    >
-      <DialogTitle>
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          Join existing team
-          <IconButton onClick={handleOnClose}>
-            <Close />
-          </IconButton>
-        </Box>
-      </DialogTitle>
-      <DialogContent>
-        <TextFieldElement
-          fullWidth
-          name="link"
-          control={control}
-          required
-          disabled={loading}
-          placeholder="Enter team invite link"
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button variant="text" type="submit" disabled={loading}>
-          Join team
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <>
+      <ListItemButton onClick={handleOpen}>
+        <ListItemIcon>
+          <OpenInNew />
+        </ListItemIcon>
+        <ListItemText>Join Existing Team</ListItemText>
+      </ListItemButton>
+
+      <Dialog
+        open={isOpen}
+        maxWidth="sm"
+        fullWidth
+        id="join-form"
+        PaperProps={{
+          component: "form",
+          onSubmit: handleSubmit(handleOnSubmit),
+        }}
+      >
+        <DialogTitle>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            Join existing team
+            <IconButton onClick={handleClose}>
+              <Close />
+            </IconButton>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <TextFieldElement
+            fullWidth
+            name="link"
+            control={control}
+            required
+            disabled={loading}
+            placeholder="Enter team invite link"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button variant="text" type="submit" disabled={loading}>
+            Join team
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 

@@ -10,22 +10,18 @@ import {
   Toolbar,
 } from "@mui/material";
 
-import { Add } from "@mui/icons-material";
 import ContentPasteIcon from "@mui/icons-material/ContentPaste";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 import Logo from "../Logo";
 import { useRouter } from "next/router";
-import CreateTeamDialog from "../Dialogs/CreateTeamDialog";
-import useIsOpen from "../../logics/hooks/useIsOpen";
-import JoinTeamDialog from "../Dialogs/JoinTeamDialog";
+import CreateTeamDialog from "./CreateTeamDialog";
+import JoinTeamDialog from "./JoinTeamDialog";
 
 import team from "../../mock/team.json";
 export const drawerWidth = 245;
 
 const AppDrawer: React.FC = () => {
   const router = useRouter();
-  const { isOpen, handleOpen, handleClose } = useIsOpen();
 
   const projects: ProjectTypes[] = [team];
   console.log(router.pathname);
@@ -86,21 +82,10 @@ const AppDrawer: React.FC = () => {
         <Divider />
         {/*  Action Button List */}
         <List>
-          <ListItemButton>
-            <ListItemIcon>
-              <Add />
-            </ListItemIcon>
-            <ListItemText>Create new Team</ListItemText>
-          </ListItemButton>
-          <ListItemButton onClick={handleOpen}>
-            <ListItemIcon>
-              <OpenInNewIcon />
-            </ListItemIcon>
-            <ListItemText>Join Existing Team</ListItemText>
-          </ListItemButton>
+          <CreateTeamDialog />
+          <JoinTeamDialog />
         </List>
       </Drawer>
-      <JoinTeamDialog isOpen={isOpen} handleOnClose={handleClose} />
     </>
   );
 };

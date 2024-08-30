@@ -1,4 +1,4 @@
-interface UserTypes {
+export interface UserTypes {
   uid: string;
   name: string;
   email: string;
@@ -6,7 +6,7 @@ interface UserTypes {
   settings: Object;
 }
 
-interface TaskTypes {
+export  interface TaskTypes {
   id: string;
   name: string;
   status: string;
@@ -19,7 +19,7 @@ interface TaskTypes {
   updatedOn: Date;
 }
 
-interface ProjectTypes {
+export interface ProjectTypes {
   uid: string;
   members: string[];
   tasks: string[];
