@@ -44,5 +44,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/auth", "/api/((?!auth).*)"],
+  matcher: ["/", "/auth", "/auth/register", "/api/((?!auth).*)"],
 };
