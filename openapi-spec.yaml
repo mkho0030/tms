@@ -1,0 +1,155 @@
+openapi: 3.0.3
+info:
+    title: Grah Internal API
+    version: '1.0'
+servers:
+    -
+        url: 'http://localhost:3000/api'
+paths:
+    /projects/join:
+        post:
+            tags:
+                - projects
+            parameters:
+                -
+                    name: id
+                    description: ID of project to join
+                    schema:
+                        type: string
+                    in: query
+                    required: true
+            responses:
+                '307':
+                    description: Successfully added user to project. Redirects to project page
+                '400':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+                    description: Invalid project ID
+                '401':
+                    description: Not authorized
+                '500':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+                    description: Failed to join project
+            summary: Adds a logged in user to project with id
+    /users:
+        get:
+            tags:
+                - users
+            parameters:
+                -
+                    name: uid
+                    description: ID of user to get
+                    schema:
+                        type: string
+                    in: query
+                    required: true
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+                    description: Return user information
+                '404':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Error'
+                    description: User with uid doesn't exist
+            summary: Gets a user with uid
+        post:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/User'
+            tags:
+                - users
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/User'
+                    description: Return newly created user
+            summary: Create or update user if it already exists
+    /projects:
+        get:
+            tags:
+                - projects
+            responses:
+                '200':
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: '#/components/schemas/Project'
+                    description: List of projects that the logged in user belongs to
+                '401':
+                    description: Not authorized
+            summary: Get the projects for a user
+        post:
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                name:
+                                    type: string
+                required: true
+            tags:
+                - projects
+            responses:
+                '201':
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Project'
+                    description: Project successfully created
+                '401':
+                    description: Not authorized
+            summary: 'Creates a project with {name}'
+components:
+    schemas:
+        Project:
+            type: object
+            properties:
+                _id:
+                    type: string
+                members:
+                    type: string
+                tasks:
+                    type: array
+                    items:
+                        type: string
+                name:
+                    type: string
+                icon:
+                    type: string
+                createdOn:
+                    type: string
+                updatedOn:
+                    type: string
+        User:
+            type: object
+            properties:
+                uid:
+                    type: string
+                name:
+                    type: string
+                email:
+                    type: string
+                photoUrl:
+                    type: string
+        Error:
+            type: object
+            properties:
+                error:
+                    type: string

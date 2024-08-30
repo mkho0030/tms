@@ -22,7 +22,6 @@ export const drawerWidth = 245;
 
 const AppDrawer: React.FC = () => {
   const router = useRouter();
-
   const projects: ProjectTypes[] = [team];
   console.log(router.pathname);
   console.log(projects[0].uid);

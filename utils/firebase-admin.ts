@@ -1,7 +1,10 @@
-import { initializeApp, cert } from "firebase-admin/app";
+import { initializeApp, cert, getApps, getApp } from "firebase-admin/app";
 import credential from "../credentials/firebase-admin-cred.json";
+import { getAuth } from "firebase-admin/auth";
 
-// @ts-expect-error
-const admin = initializeApp({ credential: cert(credential) }, "admin");
+const admin = !getApps().length
+  ? // @ts-expect-error
+    initializeApp({ credential: cert(credential) }, "admin")
+  : getApp("admin");
 
-export default admin;
+export const auth = getAuth(admin);
