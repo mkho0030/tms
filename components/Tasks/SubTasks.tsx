@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Button, Typography } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import SubtaskCard from "./SubTaskCard";
 
 const Subtasks: React.FC = () => {
     return (
@@ -17,6 +18,8 @@ const Subtasks: React.FC = () => {
                     Link existing task
                 </Button>
             </Box>
+            <SubtaskCard/>
+            <SubtaskCard/>
         </Box>
     );
 };
