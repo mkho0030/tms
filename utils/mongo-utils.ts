@@ -11,18 +11,31 @@ export type UserType = {
 export type ProjectType = {
   _id: string;
   members: string[];
-  tasks: string[];
+  tasks: TaskType[];
   name: string;
   icon: string;
   createdOn: Date;
   updatedOn: Date;
 };
 
-export const setUser = async (user: UserType): Promise<void> => {
+export type TaskType = {
+  _id: string;
+  name: string;
+  definition: string;
+  startDate: Date;
+  endDate: Date;
+  assignees: string;
+  children: TaskType[];
+  status: string;
+};
+
+export const setUser = async (user: UserType): Promise<boolean> => {
   const client = await clientPromise;
   const db = client.db("TMS");
   const col = db.collection<UserType>("UserData");
-  await col.updateOne({ uid: user.uid }, { $set: user }, { upsert: true });
+  const result = await col.updateOne({ uid: user.uid }, { $set: user }, { upsert: true });
+
+  return result.matchedCount === 1;
 };
 
 export const getUser = async (uid: string): Promise<UserType | null> => {
@@ -76,3 +89,49 @@ export const getProjectsForUser = async (
   const projects = await col.find({ members: uid }).toArray();
   return projects;
 };
+
+export const addTaskToProject = async (
+  projectId: string,
+  task: TaskType
+): Promise<boolean> => {
+  const client = await clientPromise;
+  const db = client.db("TMS");
+  const col = db.collection<ProjectType>("ProjectData");
+
+  const result = await col.updateOne(
+    { _id: projectId },
+    { $addToSet: { tasks: task } },
+    { upsert: true }
+  );
+  return result.matchedCount === 1;
+}
+
+export const updateTaskInProject = async (
+  projectId: string,
+  task: TaskType
+): Promise<boolean> => {
+  const client = await clientPromise;
+  const db = client.db("TMS");
+  const col = db.collection<ProjectType>("ProjectData");
+
+  const result = await col.updateOne(
+    { _id: projectId, "tasks._id": task._id },
+    { $set: { "tasks.$": task } }
+  );
+  return result.matchedCount === 1;
+}
+
+export const deleteTaskFromProject = async (
+  projectId: string,
+  taskId: string
+): Promise<boolean> => {
+  const client = await clientPromise;
+  const db = client.db("TMS");
+  const col = db.collection<ProjectType>("ProjectData");
+
+  const result = await col.updateOne(
+    { _id: projectId },
+    { $pull: { tasks: { _id: taskId } } }
+  );
+  return result.matchedCount === 1;
+}
