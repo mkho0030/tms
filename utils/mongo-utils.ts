@@ -11,7 +11,7 @@ export type UserType = {
 export type ProjectType = {
   _id: string;
   members: string[];
-  tasks: TaskType[];
+  taskIds: string[];
   name: string;
   icon: string;
   createdOn: Date;
@@ -24,9 +24,10 @@ export type TaskType = {
   definition: string;
   startDate: Date;
   endDate: Date;
-  assignees: string;
+  assignees: string[];
   children: TaskType[];
   status: string;
+	projectId: string;
 };
 
 export const setUser = async (user: UserType): Promise<boolean> => {
@@ -42,7 +43,7 @@ export const getUser = async (uid: string): Promise<UserType | null> => {
   const client = await clientPromise;
   const db = client.db("TMS");
   const col = db.collection<UserType>("UserData");
-  const user = await col.findOne({ uid });
+  const user = await col.findOne({ uid: uid });
   return user;
 };
 
@@ -50,8 +51,8 @@ export const createProject = async (name: string): Promise<ProjectType> => {
   const project: ProjectType = {
     _id: uuidv4(),
     members: [],
-    tasks: [],
-    name,
+    taskIds: [],
+    name: name,
     icon: "default",
     createdOn: new Date(),
     updatedOn: new Date(),
@@ -60,7 +61,7 @@ export const createProject = async (name: string): Promise<ProjectType> => {
   const client = await clientPromise;
   const db = client.db("TMS");
   const col = db.collection<ProjectType>("ProjectData");
-  const result = await col.insertOne(project);
+  await col.insertOne(project);
   return project;
 };
 
@@ -91,47 +92,81 @@ export const getProjectsForUser = async (
 };
 
 export const addTaskToProject = async (
-  projectId: string,
-  task: TaskType
+	projectId: string,
+	taskName: string
 ): Promise<boolean> => {
-  const client = await clientPromise;
-  const db = client.db("TMS");
-  const col = db.collection<ProjectType>("ProjectData");
+	const task: TaskType = {
+		_id: uuidv4(),
+		name: taskName,
+		definition: "Put your task details here.",
+		startDate: new Date(),
+		endDate: new Date(),
+		assignees: [],
+		children: [],
+		status: "",
+		projectId: projectId
+	}  
 
-  const result = await col.updateOne(
-    { _id: projectId },
-    { $addToSet: { tasks: task } },
-    { upsert: true }
-  );
-  return result.matchedCount === 1;
+	const client = await clientPromise;
+	const db = client.db("TMS");
+	const col = db.collection<ProjectType>("ProjectData");
+
+	const result = await col.updateOne(
+		{ _id: projectId },
+		{ $addToSet: { taskids: task._id } }
+	);
+
+	const taskCol = db.collection<TaskType>("TaskData");
+	await taskCol.insertOne(task);
+
+	return result.matchedCount === 1;
 }
 
-export const updateTaskInProject = async (
-  projectId: string,
-  task: TaskType
-): Promise<boolean> => {
-  const client = await clientPromise;
-  const db = client.db("TMS");
-  const col = db.collection<ProjectType>("ProjectData");
+export const getTasksById = async (
+	taskId: string
+): Promise<TaskType | null> => {
+	const client = await clientPromise;
+	const db = client.db("TMS");
+	const col = db.collection<TaskType>("TaskData");
+	const result = await col.findOne( { _id: taskId } );
+	return result
+}
 
-  const result = await col.updateOne(
-    { _id: projectId, "tasks._id": task._id },
-    { $set: { "tasks.$": task } }
-  );
-  return result.matchedCount === 1;
+export const getTasksByUser = async (
+	userId: string
+): Promise<TaskType[] | null> => {
+	const client = await clientPromise;
+	const db = client.db("TMS");
+	const col = db.collection<TaskType>("TaskData");
+	const result = await col.find( { assignees: userId } ).toArray();
+	return result
+}
+
+
+export const updateTaskInProject = async (
+	task: TaskType
+): Promise<boolean> => {
+	const client = await clientPromise;
+	const db = client.db("TMS");
+	const col = db.collection<TaskType>("TaskData");
+	const result = await col.updateOne({ _id: task._id }, { $set: task });
+	return result.matchedCount === 1;
 }
 
 export const deleteTaskFromProject = async (
-  projectId: string,
-  taskId: string
+	projectId: string,
+	taskId: string
 ): Promise<boolean> => {
-  const client = await clientPromise;
-  const db = client.db("TMS");
-  const col = db.collection<ProjectType>("ProjectData");
+	const client = await clientPromise;
+	const db = client.db("TMS");
+	const col = db.collection<ProjectType>("ProjectData");
+	const result = await col.updateOne(
+		{ _id: projectId },
+		{ $pull: { taskids: taskId } }
+	);
 
-  const result = await col.updateOne(
-    { _id: projectId },
-    { $pull: { tasks: { _id: taskId } } }
-  );
-  return result.matchedCount === 1;
+	const taskCol = db.collection<TaskType>("TaskData");
+	await taskCol.deleteOne({ _id: taskId });
+
+	return result.matchedCount === 1;
 }
