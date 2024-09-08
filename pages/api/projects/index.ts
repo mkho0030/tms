@@ -4,7 +4,7 @@ import {
   addUserToProject,
   createProject,
   getProjectsForUser,
-} from "../../../utils/mongo-utils";
+} from "../../../utils/mongo-users";
 
 export default async function handler(
   req: NextApiRequest,

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getUser, setUser } from "../../../utils/mongo-utils";
+import { getUser, setUser } from "../../../utils/mongo-users";
 
 export default async function handler(
   req: NextApiRequest,

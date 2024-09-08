@@ -97,6 +97,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       router.push("/");
+      setToast({
+        message: "User Authenticated!",
+        type: "success",
+      });
     } catch (error) {
       setToast({
         message: (error as Error).message,
@@ -119,6 +123,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       router.push("/");
+
+      setToast({
+        message: "User Authenticated!",
+        type: "success",
+      });
     } catch (error) {
       setToast({
         message: (error as Error).message,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   IconButton,
   Avatar,
@@ -47,12 +47,12 @@ const CustomAppBar = () => {
         }}
       >
         {/* Notification bell */}
-        <IconButton>
+        <IconButton size="large">
           <Notifications />
         </IconButton>
         {/* Account */}
         <IconButton onClick={handleOnClick}>
-          <Avatar sx={{ width: 24, height: 24 }} src={user?.photoURL || ""} />
+          <Avatar sx={{ width: 32, height: 32 }} src={user?.photoURL || ""} />
         </IconButton>
       </Toolbar>
 
@@ -69,8 +69,13 @@ const CustomAppBar = () => {
           horizontal: "right",
         }}
       >
-        <Box sx={{ p: 2, width: 300 }}>
-          <Typography variant="subtitle1" align="left" sx={{ mb: 0 }}>
+        <Box sx={{ p: 2, pb: 0, width: 300 }}>
+          <Typography
+            variant="subtitle1"
+            fontWeight={"400"}
+            align="left"
+            sx={{ mb: 0 }}
+          >
             Account
           </Typography>
         </Box>
