@@ -77,7 +77,7 @@ jobs:
           mongodb-port: 27017
           mongodb-db: tms
       - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps
+        run: pnpm playwright:install
       - name: Run Playwright tests
         run: pnpm test:integration
       - uses: actions/upload-artifact@v4
