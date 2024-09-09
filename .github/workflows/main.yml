@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  build_site:
+  build:
     name: Build app
     runs-on: ubuntu-latest
     steps:
@@ -22,16 +22,53 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4.0.0
         with:
-          version: 9.4.0
+          version: 9.9.0
           run_install: false
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22.2.0
           cache: pnpm
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      # - name: Test
-      #   run: pnpm run test:unit
       - name: Build
         run: pnpm build
+  test:
+    name: Test app
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up env
+        run: |
+          echo "NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ vars.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ vars.NEXT_PUBLIC_FIREBASE_API_KEY }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ vars.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ vars.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}" >> $GITHUB_ENV
+          echo "MONGODB_URI=mongodb://localhost:27017/tms" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4.0.0
+        with:
+          version: 9.9.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.2.0
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Run unit tests
+        run: pnpm test:unit
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.11.0
+        with:
+          mongodb-version: 7.0
+          mongodb-port: 27017
+          mongodb-db: tms
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps
+      - name: Run Playwright tests
+        run: pnpm test:integration
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
