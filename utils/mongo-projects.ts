@@ -52,7 +52,6 @@ export const addUserToProject = async (
   );
   return result.matchedCount === 1;
 };
-<<<<<<< HEAD:utils/mongo-utils.ts
 
 export const getProjectsForUser = async (
   uid: string
@@ -62,16 +61,5 @@ export const getProjectsForUser = async (
   const col = db.collection<ProjectType>("ProjectData");
 
   const projects = await col.find({ members: uid }).toArray();
-  return projects;
-};
-
-export const getProjectsById = async (
-  _id: string
-): Promise<ProjectType[]> => {
-  const client = await clientPromise;
-  const db = client.db("TMS");
-  const col = db.collection<ProjectType>("ProjectData");
-
-  const projects = await col.find({ _id: _id }).toArray();
   return projects;
 };
