@@ -12,6 +12,7 @@ export type TaskType = {
   children: TaskType[];
   status: string;
 	projectId: string;
+	taskParentId?: string;
 };
 
 export const addTaskToProject = async (
@@ -44,6 +45,42 @@ export const addTaskToProject = async (
 
 	return result.matchedCount === 1;
 }
+
+export const addSubtaskToTask = async (
+	taskId: string,
+	subtaskName: string
+): Promise<boolean> => {
+	const client = await clientPromise;
+	const db = client.db("TMS");
+	const col = db.collection<TaskType>("TaskData");
+	const parent = await col.findOne({ _id: taskId });
+
+	if (!parent) {
+		return false;
+	}
+	const parentProjectId = parent.projectId;
+
+	const task: TaskType = {
+		_id: uuidv4(),
+		name: subtaskName,
+		definition: "Put your task details here.",
+		startDate: new Date(),
+		endDate: new Date(),
+		assignees: [],
+		children: [],
+		status: "",
+		projectId: parentProjectId,
+		taskParentId: taskId
+	}
+
+	const result = await col.updateOne(
+		{ _id: taskId },
+		{ $addToSet: { children: task } }
+	);
+
+	return result.matchedCount === 1;
+}
+
 
 export const getTasksById = async (
 	taskId: string
