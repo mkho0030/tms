@@ -9,7 +9,7 @@
     "test:integration": "playwright test",
     "test:unit": "vitest run",
     "mongo:test": "docker run --rm -p 27018:27017 mongo:7.0.12",
-    "playwright:install": "playwright install --with-deps chrome"
+    "playwright:install": "playwright install --with-deps chrome chromium"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
