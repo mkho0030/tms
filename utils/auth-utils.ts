@@ -12,7 +12,9 @@ export const getRequestUser = async (req: NextApiRequest) => {
   if (!token) return null;
   try {
     const decodeToken = await auth.verifyIdToken(token);
+    
     const uid = decodeToken.uid;
+
     return uid;
   } catch {
     return null;
