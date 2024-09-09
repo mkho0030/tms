@@ -18,6 +18,7 @@ import CreateTeamDialog from "./CreateTeamDialog";
 import JoinTeamDialog from "./JoinTeamDialog";
 
 import team from "../../mock/team.json";
+import { ProjectTypes } from "../../types/db-data";
 export const drawerWidth = 245;
 
 const AppDrawer: React.FC = () => {
