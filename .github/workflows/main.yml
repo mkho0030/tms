@@ -1,0 +1,37 @@
+name: Node CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build_site:
+    name: Build and deploy static frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up .env
+        run: |
+          echo "NEXT_PUBLIC_FIREBASE_PROJECT_ID=${{ vars.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ vars.NEXT_PUBLIC_FIREBASE_API_KEY }} >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ vars.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }} >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ vars.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }} >> $GITHUB_ENV
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4.0.0
+        with:
+          version: 9.4.0
+          run_install: false
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.2.0
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      # - name: Test
+      #   run: pnpm run test:unit
+      - name: Build
+        run: pnpm build
