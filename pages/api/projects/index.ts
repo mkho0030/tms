@@ -1,12 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getRequestUser } from "../../../utils/auth-utils";
-import {
-  addUserToProject,
-  createProject,
-  getProjectsById,
-  getProjectsForUser,
-  getUser,
-} from "../../../utils/mongo-utils";
+import { getProjectsForUser, getUser } from "../../../utils/mongo-users";
+import { addUserToProject, createProject, getProjectsById } from "../../../utils/mongo-projects";
 
 export default async function handler(
   req: NextApiRequest,

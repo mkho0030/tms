@@ -1,44 +1,31 @@
 import { v4 as uuidv4 } from "uuid";
 import clientPromise from "./mongodb";
 
-export type UserType = {
-  uid: string;
-  name: string;
-  email: string;
-  photoUrl: string;
-};
-
 export type ProjectType = {
   _id: string;
   members: string[];
-  tasks: string[];
+  taskIds: string[];
   name: string;
   icon: string;
   createdOn: Date;
   updatedOn: Date;
 };
 
-export const setUser = async (user: UserType): Promise<void> => {
+export const getProjectById = async (
+  id: string
+): Promise<ProjectType | null> => {
   const client = await clientPromise;
   const db = client.db("TMS");
-  const col = db.collection<UserType>("UserData");
-  await col.updateOne({ uid: user.uid }, { $set: user }, { upsert: true });
-};
-
-export const getUser = async (uid: string): Promise<UserType | null> => {
-  const client = await clientPromise;
-  const db = client.db("TMS");
-  const col = db.collection<UserType>("UserData");
-  const user = await col.findOne({ uid });
-  return user;
+  const col = db.collection<ProjectType>("ProjectData");
+  return col.findOne({ _id: id });
 };
 
 export const createProject = async (name: string): Promise<ProjectType> => {
   const project: ProjectType = {
     _id: uuidv4(),
     members: [],
-    tasks: [],
-    name,
+    taskIds: [],
+    name: name,
     icon: "default",
     createdOn: new Date(),
     updatedOn: new Date(),
@@ -47,7 +34,7 @@ export const createProject = async (name: string): Promise<ProjectType> => {
   const client = await clientPromise;
   const db = client.db("TMS");
   const col = db.collection<ProjectType>("ProjectData");
-  const result = await col.insertOne(project);
+  await col.insertOne(project);
   return project;
 };
 
@@ -65,6 +52,7 @@ export const addUserToProject = async (
   );
   return result.matchedCount === 1;
 };
+<<<<<<< HEAD:utils/mongo-utils.ts
 
 export const getProjectsForUser = async (
   uid: string
