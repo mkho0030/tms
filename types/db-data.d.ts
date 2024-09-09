@@ -20,8 +20,8 @@ export  interface TaskTypes {
 }
 
 export interface ProjectTypes {
-  uid: string;
-  members: string[];
+  _id: string;
+  members: UserTypes[];
   tasks: string[];
   name: string;
   icon: string;

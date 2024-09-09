@@ -40,11 +40,12 @@ const JoinTeamDialog: React.FC = () => {
 
       const { link } = values;
       const teamId = link.split("/")[3];
+      console.log(teamId)
       const req = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_URL}/api/test/team/join/${teamId}`,
+        `${process.env.NEXT_PUBLIC_APP_URL}/api/projects/join`,
         {
           method: "POST",
-          body: JSON.stringify({ user: "" }),
+          body: JSON.stringify({ id: teamId }),
         }
       );
 

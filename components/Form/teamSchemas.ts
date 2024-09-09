@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-export const createTeamSchema = z.object({});
+export const createTeamSchema = z.object({
+  name: z.string().min(1, { message: "Field cannot be empty" })
+});
 
 export const joinTeamSchema = z.object({
   link: z

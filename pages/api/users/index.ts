@@ -7,7 +7,7 @@ export default async function handler(
 ) {
   // create user
   if (req.method === "POST") {
-    const { uid, name, email, photoUrl } = req.body;
+    const { uid, name, email, photoUrl } = JSON.parse(req.body);
     await setUser({ uid, name, email, photoUrl });
     return res.status(200).json({ uid, name, email, photoUrl });
   }
@@ -20,8 +20,8 @@ export default async function handler(
     }
     const user = await getUser(uid);
     if (!user) {
-      return res.status(404).send({ error: "" });
+      return res.status(404).send({ error: "User not found" });
     }
-    return res.status(200).json(user);
+    return res.status(200).json({...user});
   }
 }

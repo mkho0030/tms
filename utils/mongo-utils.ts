@@ -76,3 +76,14 @@ export const getProjectsForUser = async (
   const projects = await col.find({ members: uid }).toArray();
   return projects;
 };
+
+export const getProjectsById = async (
+  _id: string
+): Promise<ProjectType[]> => {
+  const client = await clientPromise;
+  const db = client.db("TMS");
+  const col = db.collection<ProjectType>("ProjectData");
+
+  const projects = await col.find({ _id: _id }).toArray();
+  return projects;
+};
