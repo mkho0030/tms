@@ -19,6 +19,8 @@ jobs:
           echo "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ vars.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}" >> $GITHUB_ENV
           mkdir -p ./credentials
           echo "{}" > ./credentials/firebase-admin-cred.json
+          ls -a
+          ls ./credentials
       - name: Checkout
         uses: actions/checkout@v4.1.7
       - name: Setup pnpm
