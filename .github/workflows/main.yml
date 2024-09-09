@@ -29,6 +29,15 @@ jobs:
         with:
           node-version: 22.2.0
           cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      # - name: Test
+      #   run: pnpm run test:unit
+      - name: Create dummy files
+        run: |
+          mkdir -p ./credentials
+          echo "{}" > ./credentials/firebase-admin-cred.json
+          ls
       - name: Build
         run: pnpm build
   test:

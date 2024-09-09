@@ -3,7 +3,7 @@ import credential from "../credentials/firebase-admin-cred.json";
 import { getAuth } from "firebase-admin/auth";
 
 const admin = !getApps().length
-  ? // @ts-expect-error
+  ? //@ts-ignore
     initializeApp({ credential: cert(credential) }, "admin")
   : getApp("admin");
 
