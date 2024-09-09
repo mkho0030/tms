@@ -31,10 +31,10 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Create dummy files
+      - name: Create credentials files
         run: |
           mkdir -p ./credentials
-          echo "{}" > ./credentials/firebase-admin-cred.json
+          echo "${{ secrets.FIREBASE_CREDS }}" > ./credentials/firebase-admin-cred.json
           ls
       - name: Build
         run: pnpm build
@@ -48,6 +48,10 @@ jobs:
           echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ vars.NEXT_PUBLIC_FIREBASE_API_KEY }}" >> $GITHUB_ENV
           echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ vars.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}" >> $GITHUB_ENV
           echo "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${{ vars.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_APP_URL=http://localhost:3000" >> $GITHUB_ENV
+          echo "ENFORCE_MIDDLEWARE=false" >> $GITHUB_ENV
+          echo "SKIP_SERVER_AUTH=" >> $GITHUB_ENV
+          echo "JWT_SECRET=3p2kgx7MJDW0XJ3yTq1X" >> $GITHUB_ENV
           echo "MONGODB_URI=mongodb://localhost:27017/tms" >> $GITHUB_ENV
 
       - uses: actions/checkout@v4
@@ -63,6 +67,11 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Run unit tests
         run: pnpm test:unit
+      - name: Create credentials files
+        run: |
+          mkdir -p ./credentials
+          echo "${{ secrets.FIREBASE_CREDS }}" > ./credentials/firebase-admin-cred.json
+          ls
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.11.0
         with:
