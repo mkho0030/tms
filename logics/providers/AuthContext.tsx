@@ -14,6 +14,7 @@ import app from "../../utils/firebase";
 import { useToast } from "./ToastContext";
 import { deleteCookie, setCookie } from "cookies-next";
 import { GoogleAuthProvider } from "firebase/auth";
+import { usePathname } from "next/navigation";
 
 import { useRouter } from "next/router";
 
@@ -52,6 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const pathname = usePathname();
 
   const auth = getAuth(app);
   auth.setPersistence(browserSessionPersistence);
@@ -251,7 +253,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [auth]);
 
   useEffect(() => {
-    if (!isAuth && !loading) {
+    if (!isAuth && !loading && pathname !== "/auth/register") {
       deleteCookie("auth_token");
       router.push("/auth/login");
     }

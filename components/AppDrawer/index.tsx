@@ -29,6 +29,9 @@ const AppDrawer: React.FC = () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_APP_URL}/api/projects`
       );
+      if (!res.ok) {
+        throw new Error("Failed to fetch projects");
+      }
       const data = await res.json();
       return data;
     };
