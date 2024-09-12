@@ -105,13 +105,32 @@ export const getTasksByUser = async (
 
 export const updateTaskInProject = async (
 	task: TaskType
-): Promise<boolean> => {
+  ): Promise<boolean> => {
 	const client = await clientPromise;
 	const db = client.db("TMS");
 	const col = db.collection<TaskType>("TaskData");
-	const result = await col.updateOne({ _id: task._id }, { $set: task });
-	return result.matchedCount === 1;
-}
+  
+	const existingTask = await col.findOne({ _id: task._id });
+
+	if (existingTask) {
+		const result = await col.updateOne(
+			{ _id: task._id },
+			{ $set: task }
+		);
+		return result.matchedCount === 1;
+	// Assuming subtask depth is only 1
+	} else {
+		const parentTask = await col.findOne({ _id: task.taskParentId });
+		if (!parentTask) {
+			return false;
+		}
+		const result = await col.updateOne(
+			{ _id: parentTask._id },
+			{ $addToSet: { children: task } }
+		);
+		return result.matchedCount === 1;
+	}
+  };
 
 export const deleteTaskFromProject = async (
 	projectId: string,
