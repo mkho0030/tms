@@ -147,5 +147,14 @@ export const deleteTaskFromProject = async (
 	const taskCol = db.collection<TaskType>("TaskData");
 	await taskCol.deleteOne({ _id: taskId });
 
+	// Delete the task from its parent's children array if it is a subtask
+	const parentTask = await taskCol.findOne({ children: { $elemMatch: { _id: taskId } } });
+	if (parentTask) {
+		await taskCol.updateOne(
+			{ _id: parentTask._id },
+			{ $pull: { children: { _id: taskId } } }
+		);
+	}
+
 	return result.matchedCount === 1;
 }
