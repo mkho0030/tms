@@ -1,5 +1,7 @@
 ## FIT3163 Task Management System
 
+[![Node CI](https://github.com/mkho0030/tms/actions/workflows/main.yml/badge.svg)](https://github.com/mkho0030/tms/actions/workflows/main.yml)
+
 This is a task management system that showcases the team's understanding to develop and launch a project under FIT3163
 
 ## How to use

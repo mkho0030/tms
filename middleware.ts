@@ -19,6 +19,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
+  if (url.pathname === "/auth/register") {
+    return NextResponse.next();
+  }
+
   const verifyTokenPath = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/verify`;
   const idToken = request.cookies.get("auth_token");
 

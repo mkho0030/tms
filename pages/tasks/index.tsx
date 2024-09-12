@@ -1,7 +1,6 @@
 import { Grid } from "@mui/material";
 import React from "react";
 import CustomToolbar from "../../components/Toolbar";
-import DropdownsAndButtons from "../../components/TaskTable/DropdownsAndButtons";
 import TaskTable from "../../components/TaskTable";
 
 const MyTasks = () => {

@@ -4,59 +4,99 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
+
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import {
+  AvatarGroup,
+  Skeleton,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@mui/material";
+import { ProjectTypes } from "../../types/db-data";
+import { useToast } from "../../logics/providers/ToastContext";
+import { PersonAdd } from "@mui/icons-material";
+
 import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
-import { AvatarGroup, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 
-const avatars = [
-  "/static/images/avatar/1.jpg",
-  "/static/images/avatar/2.jpg",
-  "/static/images/avatar/3.jpg",
-];
-
-function ResponsiveAppBar({ isTask }: { isTask: boolean }) {
+function ResponsiveAppBar({
+  isTask,
+  project,
+  isLoading,
+}: {
+  isTask: boolean;
+  project?: ProjectTypes;
+  isLoading?: boolean;
+}) {
   const [view, setView] = useState<string | null>("list");
+  const { setToast } = useToast();
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(
+      `${process.env.NEXT_PUBLIC_APP_URL}/${project?._id}`
+    );
+    setToast({
+      message: "Team link copied!",
+      type: "success",
+    });
+  };
 
   return (
     <Toolbar disableGutters sx={{ width: "100%" }}>
-      <Typography
-        variant="h4"
-        noWrap
-        component="div"
-        sx={{
-          flexGrow: 1,
-          fontWeight: 400,
-          letterSpacing: ".022rem",
-          color: "black",
-          textDecoration: "none",
-        }}
-      >
-        {isTask ? "My Tasks" : "FIT3161 Team"}
-      </Typography>
+      {isLoading ? (
+        <Box sx={{ flexGrow: 1 }}>
+          <Skeleton
+            variant="text"
+            sx={{ fontSize: "2.125rem", width: "250px" }}
+          ></Skeleton>
+        </Box>
+      ) : (
+        <Typography
+          variant="h4"
+          noWrap
+          component="div"
+          sx={{
+            flexGrow: 1,
+            fontWeight: 400,
+            letterSpacing: ".022rem",
+            color: "black",
+            textDecoration: "none",
+          }}
+        >
+          {isTask ? "My Tasks" : project?.name}
+        </Typography>
+      )}
+
       {/* This box should only appear if we are at teams project  */}
       {!isTask && (
         <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center" }}>
-          <Button sx={{ mx: 1 }}>
+          <Button sx={{ mx: 1 }} onClick={handleCopyLink} disabled={isLoading}>
             <OpenInNewIcon sx={{ mr: 1 }} />
             Copy Team Link
           </Button>
-          <Button sx={{ mx: 1 }}>
-            <PersonAddIcon sx={{ mr: 1 }} />
+          <Button sx={{ mx: 1 }} disabled={isLoading}>
+            <PersonAdd sx={{ mr: 1 }} />
             Add New Member
           </Button>
           <AvatarGroup max={4} spacing={"small"}>
-            <Avatar alt="Test" src="/static/images/avatar/1.jpg" />
-            <Avatar alt="Test" src="/static/images/avatar/2.jpg" />
-            <Avatar alt="Test" src="/static/images/avatar/3.jpg" />
-            <Avatar alt="Test" src="/static/images/avatar/4.jpg" />
-            <Avatar alt="Test" src="/static/images/avatar/5.jpg" />
+            {isLoading
+              ? ["", "", "", ""].map(() => (
+                  <Skeleton
+                    variant="circular"
+                    sx={{ width: 32, height: 32, marginLeft: '-8px' }}
+                  ><Avatar/></Skeleton>
+                ))
+              : project?.members.map((member) => (
+                  <Avatar
+                    alt={member.name}
+                    src={member.photoUrl}
+                    sx={{ width: 32, height: 32 }}
+                  />
+                ))}
           </AvatarGroup>
         </Box>
       )}
-
-      <ToggleButtonGroup
+      {/* <ToggleButtonGroup
         sx={{ ml: 1, color: "black" }}
         aria-label="Basic button group"
         value={view}
@@ -69,7 +109,7 @@ function ResponsiveAppBar({ isTask }: { isTask: boolean }) {
         <ToggleButton value={"calander"}>
           <CalendarTodayIcon sx={{ color: "#2a2a2a" }} />
         </ToggleButton>
-      </ToggleButtonGroup>
+      </ToggleButtonGroup> */}
     </Toolbar>
   );
 }

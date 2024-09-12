@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Divider,
   Drawer,
@@ -17,14 +17,29 @@ import { useRouter } from "next/router";
 import CreateTeamDialog from "./CreateTeamDialog";
 import JoinTeamDialog from "./JoinTeamDialog";
 
-import team from "../../mock/team.json";
+import { ProjectTypes } from "../../types/db-data";
 export const drawerWidth = 245;
 
 const AppDrawer: React.FC = () => {
   const router = useRouter();
-  const projects: ProjectTypes[] = [team];
-  console.log(router.pathname);
-  console.log(projects[0].uid);
+  const [projects, setProjects] = useState<ProjectTypes[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_APP_URL}/api/projects`
+      );
+      if (!res.ok) {
+        throw new Error("Failed to fetch projects");
+      }
+      const data = await res.json();
+      return data;
+    };
+
+    fetchData()
+      .then((res) => setProjects(res))
+      .catch(console.error);
+  }, [router]);
 
   return (
     <>
@@ -68,8 +83,8 @@ const AppDrawer: React.FC = () => {
           {/* Get Project List from API */}
           {projects.map((project, index) => (
             <ListItemButton
-              selected={router.query.id == project.uid}
-              onClick={() => router.push(`/teams/${project.uid}`)}
+              selected={router.query.id == project._id}
+              onClick={() => router.push(`/teams/${project._id}`)}
             >
               <ListItemIcon>
                 <ContentPasteIcon />

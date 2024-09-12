@@ -14,10 +14,12 @@ import app from "../../utils/firebase";
 import { useToast } from "./ToastContext";
 import { deleteCookie, setCookie } from "cookies-next";
 import { GoogleAuthProvider } from "firebase/auth";
+import { usePathname } from "next/navigation";
 
 import { useRouter } from "next/router";
 
 interface User {
+  uid: string | null;
   displayName: string | null;
   email: string | null;
   photoURL: string | null;
@@ -51,6 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true);
   const [isAuth, setIsAuth] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const pathname = usePathname();
 
   const auth = getAuth(app);
   auth.setPersistence(browserSessionPersistence);
@@ -91,6 +94,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       );
 
       setUser({
+        uid: userCredential.user.uid,
         displayName: userCredential.user.displayName,
         email: userCredential.user.email,
         photoURL: userCredential.user.photoURL,
@@ -117,6 +121,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const result = await signInWithPopup(auth, provider);
 
       setUser({
+        uid: result.user.uid,
         displayName: result.user.displayName,
         email: result.user.email,
         photoURL: result.user.photoURL,
@@ -148,6 +153,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       );
 
       setUser({
+        uid: userCredential.user.uid,
         displayName: userCredential.user.displayName,
         email: userCredential.user.email,
         photoURL: userCredential.user.photoURL,
@@ -190,10 +196,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setLoading(true);
     auth.onAuthStateChanged(function handleAuth(user) {
       if (user) {
+        // Set User on the front-end
         setUser({
+          uid: user.uid,
           displayName: user.displayName,
           email: user.email,
           photoURL: user.photoURL,
+        });
+
+        // Check if user is created in the db, if not create.
+        fetch(
+          `${process.env.NEXT_PUBLIC_APP_URL}/api/users?uid=${user.uid}`
+        ).then((res) => {
+          if (res.status == 404) {
+            fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/users`, {
+              method: "POST",
+              body: JSON.stringify({
+                uid: user.uid,
+                name: user.displayName,
+                email: user.email,
+                photoUrl: user.photoURL,
+              }),
+            }).then((res) => console.log(res.status));
+          }
+          console.log(res.status);
+          console.log(JSON.stringify(res.json()));
         });
 
         user
@@ -226,7 +253,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [auth]);
 
   useEffect(() => {
-    if (!isAuth && !loading) {
+    if (!isAuth && !loading && pathname !== "/auth/register") {
       deleteCookie("auth_token");
       router.push("/auth/login");
     }
