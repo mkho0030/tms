@@ -81,7 +81,7 @@ export const CreateTask = ({
       //
       const fetchData = async () => {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_APP_URL}/api/projects`
+          `/api/projects`
         );
         if (!res.ok) {
           throw new Error("Failed to fetch projects");
