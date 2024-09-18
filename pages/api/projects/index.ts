@@ -19,7 +19,7 @@ export default async function handler(
   // create team
   if (req.method === "POST") {
     const { name } = JSON.parse(req.body);
-
+    console.log('Function called, name:',name)
     const newProject = await createProject(name);
     await addUserToProject(newProject._id, uid);
 
@@ -30,10 +30,12 @@ export default async function handler(
   if (req.method === "GET") {
     const { id } = req.query;
 
+
     if (!id) {
       const projects = await getProjectsForUser(uid);
       return res.status(200).json(projects);
     }
+    
 
     const project = await getProjectById(id as string);
     if (!project) {
