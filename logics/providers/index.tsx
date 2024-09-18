@@ -4,6 +4,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { ToastProvider } from "./ToastContext";
 import { blue } from "@mui/material/colors";
 import { AuthProvider } from "./AuthContext";
+import { autocompleteClasses, Box } from "@mui/material";
 
 export const Providers: React.FC<{
   children: React.ReactNode;

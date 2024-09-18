@@ -10,23 +10,26 @@ export type TaskType = {
   endDate: Date;
   assignees: string[];
   children: TaskType[];
-  status: string;
+  status: 0 | 1 | 2;
 	projectId: string;
 };
 
 export const addTaskToProject = async (
 	projectId: string,
-	taskName: string
+	taskName: string,
+  dueDate: string,
+  assignees?: string[],
+  description?: string
 ): Promise<boolean> => {
 	const task: TaskType = {
 		_id: uuidv4(),
 		name: taskName,
-		definition: "Put your task details here.",
+		definition: description || "",
 		startDate: new Date(),
-		endDate: new Date(),
-		assignees: [],
+		endDate: new Date(dueDate),
+		assignees: assignees || [],
 		children: [],
-		status: "",
+		status: 0,
 		projectId: projectId
 	}  
 
@@ -36,7 +39,7 @@ export const addTaskToProject = async (
 
 	const result = await col.updateOne(
 		{ _id: projectId },
-		{ $addToSet: { taskids: task._id } }
+		{ $addToSet: { taskIds: task._id } }
 	);
 
 	const taskCol = db.collection<TaskType>("TaskData");
@@ -80,12 +83,13 @@ export const deleteTaskFromProject = async (
 	projectId: string,
 	taskId: string
 ): Promise<boolean> => {
+  console.log(projectId, taskId)
 	const client = await clientPromise;
 	const db = client.db("TMS");
 	const col = db.collection<ProjectType>("ProjectData");
 	const result = await col.updateOne(
 		{ _id: projectId },
-		{ $pull: { taskids: taskId } }
+		{ $pull: { taskIds: taskId } }
 	);
 
 	const taskCol = db.collection<TaskType>("TaskData");

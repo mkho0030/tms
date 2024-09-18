@@ -7,16 +7,17 @@ export interface UserTypes {
 }
 
 export  interface TaskTypes {
-  id: string;
+  _id: string;
   name: string;
-  status: string;
-  assignees: string[];
+  status: 0 | 1 | 2;
+  assignees: string[] | UserTypes [];
   description: string;
   subtasks?: string[];
   startDate: Date;
   endDate: Date;
   createdOn: Date;
   updatedOn: Date;
+  projectId: string;
 }
 
 export interface ProjectTypes {

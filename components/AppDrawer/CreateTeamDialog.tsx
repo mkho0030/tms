@@ -93,12 +93,6 @@ const CreateTeamDialog: React.FC<{}> = () => {
             </Box>
           </DialogTitle>
           <DialogContent>
-            {/* <Autocomplete 
-              disablePortal
-              options={top100Films}
-              sx={{ width: 300 }}
-              renderInput={(params) => <TextField {...params} label="Movie" />}
-            /> */}
             <TextFieldElement
               fullWidth
               name="name"

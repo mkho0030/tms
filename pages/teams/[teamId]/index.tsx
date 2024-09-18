@@ -1,7 +1,7 @@
 import { NextPage } from "next";
 import React, { useEffect, useState } from "react";
-import CustomToolbar from "../../components/Toolbar";
-import TaskTable from "../../components/TaskTable";
+import CustomToolbar from "../../../components/Toolbar";
+import TaskTable from "../../../components/TaskTable";
 import { useRouter } from "next/router";
 
 const Teams: NextPage = () => {
@@ -10,13 +10,13 @@ const Teams: NextPage = () => {
 
   const router = useRouter();
 
-  const { id } = router.query
+  const { teamId } = router.query
 
   useEffect(() => {
-    setIsLoading(false);
+    setIsLoading(true);
     const fetchData = async () => {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_URL}/api/projects?id=${id}`
+        `${process.env.NEXT_PUBLIC_APP_URL}/api/projects?id=${teamId}`
       );
       const data = await res.json();
       console.log(data)
@@ -36,7 +36,7 @@ const Teams: NextPage = () => {
   return (
     <>
       <CustomToolbar isTask={false} project={projectData} isLoading={isLoading}/>
-      <TaskTable />
+      <TaskTable project={projectData} />
     </>
   );
 };
