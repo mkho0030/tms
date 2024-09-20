@@ -18,7 +18,7 @@ export const setUser = async (user: UserType): Promise<boolean> => {
     { upsert: true }
   );
 
-  return result.matchedCount === 1;
+  return result.upsertedCount === 1 || result.modifiedCount === 1;
 };
 
 export const getUser = async (uid: string): Promise<UserType | null> => {
