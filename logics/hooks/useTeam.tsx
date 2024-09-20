@@ -19,7 +19,8 @@ const useTeam = () => {
         }
       );
 
-      const { id } = await req.json();
+      const { data } = await req.json();
+      const { id } = data;
 
       if (!id) throw Error("Team not found");
 

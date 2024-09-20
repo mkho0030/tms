@@ -94,9 +94,7 @@ export const getTasksById = async (
   return result;
 };
 
-export const getTasksByUser = async (
-  userId: string
-): Promise<TaskType[] | null> => {
+export const getTasksByUser = async (userId: string): Promise<TaskType[]> => {
   const client = await clientPromise;
   const db = client.db("TMS");
   const col = db.collection<TaskType>("TaskData");

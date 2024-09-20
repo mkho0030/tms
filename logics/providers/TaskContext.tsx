@@ -17,7 +17,7 @@ const initialState = {
   task: undefined,
   deleteTask: async (taskId: string) => {},
   updateTask: async (task: TaskTypes) => {},
-  refetchData: () => {}
+  refetchData: () => {},
 };
 
 const TaskContext = createContext<TaskContextType>(initialState);
@@ -37,19 +37,19 @@ export const TaskProvider: React.FC<{
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_APP_URL}/api/tasks?id=${taskId}`
     );
-    const data = await res.json();
+    const { data } = await res.json();
     return data;
   };
 
   const refetchData = () => {
     setIsLoading(true);
     fetchData()
-        .then((data) => {
-          setTask(data.data);
-          setIsLoading(false);
-        })
-        .catch(console.error);
-  }
+      .then((data) => {
+        setTask(data.data);
+        setIsLoading(false);
+      })
+      .catch(console.error);
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -126,7 +126,7 @@ export const TaskProvider: React.FC<{
     task,
     deleteTask,
     updateTask,
-    refetchData
+    refetchData,
   };
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
 };

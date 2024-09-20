@@ -10,7 +10,7 @@ const Teams: NextPage = () => {
 
   const router = useRouter();
 
-  const { teamId } = router.query
+  const { teamId } = router.query;
 
   useEffect(() => {
     setIsLoading(true);
@@ -18,24 +18,26 @@ const Teams: NextPage = () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_APP_URL}/api/projects?id=${teamId}`
       );
-      const data = await res.json();
-      console.log(data)
+      const { data } = await res.json();
+      console.log(data);
       return data;
     };
 
     fetchData()
       .then((res) => {
-        setProjectData(res)
+        setProjectData(res);
         setIsLoading(false);
       })
       .catch(console.error);
-
-    
   }, [router]);
-  
+
   return (
     <>
-      <CustomToolbar isTask={false} project={projectData} isLoading={isLoading}/>
+      <CustomToolbar
+        isTask={false}
+        project={projectData}
+        isLoading={isLoading}
+      />
       <TaskTable project={projectData} />
     </>
   );

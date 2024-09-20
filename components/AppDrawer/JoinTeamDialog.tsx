@@ -40,7 +40,7 @@ const JoinTeamDialog: React.FC = () => {
 
       const { link } = values;
       const teamId = link.split("/")[3];
-      console.log(teamId)
+      console.log(teamId);
       const req = await fetch(
         `${process.env.NEXT_PUBLIC_APP_URL}/api/projects/join`,
         {
@@ -49,7 +49,8 @@ const JoinTeamDialog: React.FC = () => {
         }
       );
 
-      const { id } = await req.json();
+      const { data } = await req.json();
+      const { id } = data;
 
       if (!id) throw Error("Team is not found");
 

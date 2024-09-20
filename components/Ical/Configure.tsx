@@ -11,7 +11,7 @@ const Configure: React.FC = () => {
   const onClickCopy = async () => {
     const result = await fetch("/api/ical/generate");
     if (result.ok) {
-      const data = await result.json();
+      const { data } = await result.json();
       navigator.clipboard.writeText(data.url);
       setToast({
         message: "Link copied to clipboard",

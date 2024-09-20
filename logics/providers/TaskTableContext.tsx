@@ -110,8 +110,7 @@ export const TaskTableProvider: React.FC<{
         setTaskList(data);
         setIsLoading(false);
       });
-    }
-    else {
+    } else {
       const fetchData = async () => {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_APP_URL}/api/tasks`,
@@ -176,7 +175,7 @@ export const TaskTableProvider: React.FC<{
         type: "success",
       });
 
-      const data = await res.json();
+      const { data } = await res.json();
 
       // setIsLoading(false);
       router.reload();

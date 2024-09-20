@@ -19,6 +19,6 @@ export default async function handler(
     }
     const scheme = host?.includes("localhost") ? "http" : "https";
     const url = `${scheme}://${host}/api/ical?token=${token}`;
-    return res.status(200).send({ url });
+    return res.status(200).send({ data: { url }, message: "Generated url" });
   }
 }

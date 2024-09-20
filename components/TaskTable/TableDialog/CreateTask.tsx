@@ -6,7 +6,23 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Autocomplete, Avatar, Box, Button, Chip, DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, IconButton, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Avatar,
+  Box,
+  Button,
+  Chip,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  FormHelperText,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { TextFieldElement } from "react-hook-form-mui";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -42,9 +58,7 @@ export const CreateTask = ({
   const [projects, setProjects] = useState<ProjectTypes[]>([]);
   const [options, setOptions] = useState<UserTypes[]>([]);
 
-
-
-  const {submitCreateTaskForm} = useTaskTable();
+  const { submitCreateTaskForm } = useTaskTable();
   const router = useRouter();
 
   useEffect(() => {
@@ -54,7 +68,7 @@ export const CreateTask = ({
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_APP_URL}/api/projects?id=${formControl.project_id}`
         );
-        const data = await res.json();
+        const { data } = await res.json();
         console.log(data);
         return data;
       };
@@ -86,7 +100,7 @@ export const CreateTask = ({
         if (!res.ok) {
           throw new Error("Failed to fetch projects");
         }
-        const data = await res.json();
+        const { data } = await res.json();
         console.log(data);
         return data;
       };
@@ -99,13 +113,11 @@ export const CreateTask = ({
   }, []);
 
   const onSubmit = async (values: z.infer<typeof createTaskSchema>) => {
-    try{
+    try {
       await submitCreateTaskForm(values);
       reset();
       handleClose();
-    }catch(error){
-
-    }
+    } catch (error) {}
   };
 
   return (
@@ -253,11 +265,7 @@ export const CreateTask = ({
         </DialogContent>
       </Box>
       <DialogActions>
-        <Button
-          type="submit"
-          form="create-task-form"
-          variant="text"
-        >
+        <Button type="submit" form="create-task-form" variant="text">
           Create new task
         </Button>
       </DialogActions>
