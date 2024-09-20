@@ -49,12 +49,12 @@ export default async function handler(
         ),
       };
 
-      return res.status(200).json({ data: resData });
+      return res.status(200).json({ data: resData, message: "Success" });
     }
     if (projectId) {
       const project = await getProjectById(projectId as string);
       if (!project) {
-        return res.status(404).send({ error: "Project not found" });
+        return res.status(404).send({ message: "Project not found" });
       }
       const taskIds = project.taskIds;
       const tasks = await Promise.all(taskIds.map(getTasksById));
@@ -75,15 +75,10 @@ export default async function handler(
         );
       }
 
-      return res.status(200).json({ data: resTasks });
+      return res.status(200).json({ data: resTasks, message: "Success" });
     }
 
-    console.log(uid);
     const tasks = await getTasksByUser(uid);
-
-    if (tasks == null) {
-      return res.status(200).json({ data: [] });
-    }
 
     let resTasks: any[] = [];
 
@@ -100,6 +95,6 @@ export default async function handler(
         )
       );
     }
-    return res.status(200).json({ data: resTasks });
+    return res.status(200).json({ data: resTasks, message: "Success" });
   }
 }

@@ -19,27 +19,27 @@ export default async function handler(
   // create team
   if (req.method === "POST") {
     const { name } = JSON.parse(req.body);
-    console.log('Function called, name:',name)
+    console.log("Function called, name:", name);
     const newProject = await createProject(name);
     await addUserToProject(newProject._id, uid);
 
-    return res.status(201).json(newProject);
+    return res
+      .status(201)
+      .json({ data: newProject, message: "Project created" });
   }
 
   // get teams that user belongs to
   if (req.method === "GET") {
     const { id } = req.query;
 
-
     if (!id) {
       const projects = await getProjectsForUser(uid);
-      return res.status(200).json(projects);
+      return res.status(200).json({ data: projects, message: "Success" });
     }
-    
 
     const project = await getProjectById(id as string);
     if (!project) {
-      return res.status(404).json({ error: "Project not found" });
+      return res.status(404).json({ message: "Project not found" });
     }
 
     const members = project.members;
@@ -48,10 +48,13 @@ export default async function handler(
     var memberData: any = [];
 
     Promise.all(memberDataPromises).then((data) => {
-      if (data) {
-        return res.status(200).json({ ...project, members: data });
+      if (data.every(Boolean)) {
+        // filter out null values
+        return res
+          .status(200)
+          .json({ data: { ...project, members: data }, message: "Success" });
       }
-      return res.status(500).json({ error: "Something is wrong" });
+      return res.status(500).json({ message: "Something is wrong" });
     });
   }
 }

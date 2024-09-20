@@ -48,7 +48,7 @@ const TaskDetails: React.FC = () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_APP_URL}/api/projects?id=${task?.projectId}`
       );
-      const data = await res.json();
+      const { data } = await res.json();
       return data;
     };
 
@@ -79,7 +79,6 @@ const TaskDetails: React.FC = () => {
 
   const handleUpdateDate = async (date: Dayjs) => {
     try {
-      
       const res = await updateTask({
         ...task,
         // @ts-expect-error
@@ -194,7 +193,7 @@ const TaskDetails: React.FC = () => {
           <>
             <Autocomplete
               multiple
-              sx={{flex: '1 0 auto'}}
+              sx={{ flex: "1 0 auto" }}
               value={currentAssigned}
               onChange={(event, selectedOptions) => {
                 setCurrentAssigned(selectedOptions);
