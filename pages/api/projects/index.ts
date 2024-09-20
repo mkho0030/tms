@@ -23,7 +23,9 @@ export default async function handler(
     const newProject = await createProject(name);
     await addUserToProject(newProject._id, uid);
 
-    return res.status(201).json(newProject);
+    return res
+      .status(201)
+      .json({ data: newProject, message: "Project created" });
   }
 
   // get teams that user belongs to

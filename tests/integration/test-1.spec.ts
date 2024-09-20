@@ -18,6 +18,7 @@ test("create project", async ({ page }) => {
   await page.getByPlaceholder("Team Name").fill("Test Project");
   await page.getByRole("button", { name: "Create new team" }).click();
   await page.waitForURL("http://localhost:3000/teams/*-*-*-*-*");
+
   // await expect(
   //   page.getByRole("button", { name: "Test Project", exact: true })
   // ).toBeVisible();
