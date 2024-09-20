@@ -35,7 +35,7 @@ export const addTaskToProject = async (
   };
 
   const client = await clientPromise;
-  const db = client.db("TMS");
+  const db = client.db(process.env.DB_NAME || "TMS");
   const col = db.collection<ProjectType>("ProjectData");
 
   const result = await col.updateOne(
@@ -54,7 +54,7 @@ export const addSubtaskToTask = async (
   subtaskName: string
 ): Promise<boolean> => {
   const client = await clientPromise;
-  const db = client.db("TMS");
+  const db = client.db(process.env.DB_NAME || "TMS");
   const col = db.collection<TaskType>("TaskData");
   const parent = await col.findOne({ _id: taskId });
 
@@ -88,7 +88,7 @@ export const getTasksById = async (
   taskId: string
 ): Promise<TaskType | null> => {
   const client = await clientPromise;
-  const db = client.db("TMS");
+  const db = client.db(process.env.DB_NAME || "TMS");
   const col = db.collection<TaskType>("TaskData");
   const result = await col.findOne({ _id: taskId });
   return result;
@@ -96,7 +96,7 @@ export const getTasksById = async (
 
 export const getTasksByUser = async (userId: string): Promise<TaskType[]> => {
   const client = await clientPromise;
-  const db = client.db("TMS");
+  const db = client.db(process.env.DB_NAME || "TMS");
   const col = db.collection<TaskType>("TaskData");
   const result = await col.find({ assignees: userId }).toArray();
   return result;
@@ -104,7 +104,7 @@ export const getTasksByUser = async (userId: string): Promise<TaskType[]> => {
 
 export const updateTaskInProject = async (task: TaskType): Promise<boolean> => {
   const client = await clientPromise;
-  const db = client.db("TMS");
+  const db = client.db(process.env.DB_NAME || "TMS");
   const col = db.collection<TaskType>("TaskData");
 
   const existingTask = await col.findOne({ _id: task._id });
@@ -132,7 +132,7 @@ export const deleteTaskFromProject = async (
 ): Promise<boolean> => {
   console.log(projectId, taskId);
   const client = await clientPromise;
-  const db = client.db("TMS");
+  const db = client.db(process.env.DB_NAME || "TMS");
   const col = db.collection<ProjectType>("ProjectData");
   const result = await col.updateOne(
     { _id: projectId },

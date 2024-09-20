@@ -8,7 +8,7 @@ export const mongoHelper = async (
   data?: Object
 ) => {
   const client = await clientPromise;
-  const db = client.db("TMS");
+  const db = client.db(process.env.DB_NAME || "TMS");
   const mongoCollection = db.collection(collection);
 
   if (request === "READ") {
