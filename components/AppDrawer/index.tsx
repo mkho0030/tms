@@ -83,7 +83,8 @@ const AppDrawer: React.FC = () => {
           {/* Get Project List from API */}
           {projects.map((project, index) => (
             <ListItemButton
-              selected={router.query.id == project._id}
+              key={index}
+              selected={router.query.teamId == project._id}
               onClick={() => router.push(`/teams/${project._id}`)}
             >
               <ListItemIcon>

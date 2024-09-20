@@ -2,12 +2,14 @@ import {
   Avatar,
   AvatarGroup,
   Checkbox,
-  Chip,
   TableCell,
   TableRow,
   Typography,
 } from "@mui/material";
+import dayjs from "dayjs";
+import { useRouter } from "next/router";
 import React from "react";
+import ProgressStatus from "../ProgressStatus";
 
 const TaskRow = ({
   tasks,
@@ -18,27 +20,29 @@ const TaskRow = ({
   handleChecked: any;
   isSelected: any;
 }) => {
-  const handleOnClick = () => {};
+  const router = useRouter();
 
   return (
     <TableRow
-      id={tasks.id}
+      id={tasks._id}
       hover
-      onClick={handleOnClick}
-      selected={isSelected(tasks.id)}
+      onClick={() =>
+        router.push(`${process.env.NEXT_PUBLIC_APP_URL}/teams/${tasks.projectId}/${tasks._id}`)
+      }
+      selected={isSelected(tasks._id)}
       role="checkbox"
-      aria-checked={isSelected(tasks.id)}
+      aria-checked={isSelected(tasks._id)}
       sx={{ cursor: "pointer" }}
     >
       <TableCell padding="checkbox">
         <Checkbox
           color="primary"
-          onClick={(e) => handleChecked(e, tasks.id)}
-          checked={isSelected(tasks.id)}
+          onClick={(e) => handleChecked(e, tasks._id)}
+          checked={isSelected(tasks._id)}
         />
       </TableCell>
       <TableCell>
-        <Typography>{tasks.name}</Typography>
+        <Typography>{tasks?.name}</Typography>
       </TableCell>
       <TableCell>
         <AvatarGroup
@@ -46,18 +50,20 @@ const TaskRow = ({
           spacing={"small"}
           sx={{ justifyContent: "flex-end" }}
         >
-          <Avatar alt="Test" src="/static/images/avatar/1.jpg" />
-          <Avatar alt="Test" src="/static/images/avatar/2.jpg" />
-          <Avatar alt="Test" src="/static/images/avatar/3.jpg" />
-          <Avatar alt="Test" src="/static/images/avatar/4.jpg" />
-          <Avatar alt="Test" src="/static/images/avatar/5.jpg" />
+          {tasks?.assignees?.map((user: any) => (
+            <Avatar
+              sx={{ width: "32px", height: "32px" }}
+              alt={user.name}
+              src={user.photoUrl}
+            />
+          ))}
         </AvatarGroup>
       </TableCell>
       <TableCell>
-        <Typography>{tasks.endDate}</Typography>
+        <Typography>{dayjs(tasks.endDate).format("DD MMM YY")}</Typography>
       </TableCell>
       <TableCell>
-        <Chip label="In progress" color="warning" />
+        <ProgressStatus status={tasks.status} />
       </TableCell>
     </TableRow>
   );

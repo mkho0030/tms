@@ -32,6 +32,7 @@ export const createProject = async (name: string): Promise<ProjectType> => {
   };
 
   const client = await clientPromise;
+  console.log(client)
   const db = client.db("TMS");
   const col = db.collection<ProjectType>("ProjectData");
   await col.insertOne(project);

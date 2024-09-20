@@ -18,9 +18,9 @@ const SubtaskCard: React.FC = () => {
                 <Box display="flex" justifyContent="space-between" alignItems="center" mt={1}>
                     
                     <Box display="flex" gap={1}>
-                        <Avatar alt="Member 1" src="/path/to/avatar1.jpg" />
+                        {/* <Avatar alt="Member 1" src="/path/to/avatar1.jpg" />
                         <Avatar alt="Member 2" src="/path/to/avatar2.jpg" />
-                        <Avatar alt="Member 3" src="/path/to/avatar3.jpg" />
+                        <Avatar alt="Member 3" src="/path/to/avatar3.jpg" /> */}
                     </Box>
                     <Button variant="text" color="primary">
                         <OpenInNewIcon />

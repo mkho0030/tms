@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Checkbox,
@@ -11,44 +11,26 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import DropdownsAndButtons from "./DropdownsAndButtons";
 import TaskRow from "./TaskRow";
 
 import rows from "../../mock/tasks.json";
 import { InfoOutlined } from "@mui/icons-material";
+import { ProjectTypes } from "../../types/db-data";
+import {
+  TaskTableProvider,
+  useTaskTable,
+} from "../../logics/providers/TaskTableContext";
+import TableToolbar from "./TableToolbar";
 
-const TaskTable = () => {
-  const [selected, setSelected] = useState<readonly number[]>([]);
-
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      const newSelected = rows.map((n) => n.id);
-      setSelected(newSelected);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: readonly number[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
-  };
-
-  const isSelected = (id: number) => selected.indexOf(id) !== -1;
+const TaskTable = ({ project }: { project?: ProjectTypes }) => {
+  const { 
+    taskList, 
+    isLoading, 
+    selected, 
+    handleClick, 
+    handleSelectAllClick } =
+  useTaskTable();
+  const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
   return (
     <Box
@@ -62,11 +44,16 @@ const TaskTable = () => {
       }}
     >
       <Paper
-        sx={{ height: "100%", mb: 2, display: "flex", flexDirection: "column" }}
+        sx={{
+          height: "100%",
+          mb: 2,
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
-        <DropdownsAndButtons isSelected={selected.length > 0} />
-        <TableContainer sx={{ height: "100%" }}>
-          <Table sx={{ width: "calc(100% - 48px)", mx: 3 }}>
+        <TableToolbar project={project} isSelected={selected.length > 0} />
+        <TableContainer>
+          <Table sx={{ width: "calc(100% - 48px)", height: "100%", mx: 3 }}>
             <TableHead>
               <TableRow>
                 <TableCell padding="checkbox">
@@ -94,11 +81,11 @@ const TaskTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows && rows.length != 0 ? (
-                rows.map((row, index) => (
+              {!isLoading && taskList && taskList.length != 0 ? (
+                taskList.map((task, index) => (
                   <TaskRow
                     key={index}
-                    tasks={row}
+                    tasks={task}
                     handleChecked={handleClick}
                     isSelected={isSelected}
                   />
@@ -112,6 +99,7 @@ const TaskTable = () => {
                         flexDirection: "column",
                         alignItems: "center",
                         alignContent: "center",
+                        py: 20,
                       }}
                     >
                       <InfoOutlined sx={{ height: 64, width: 64 }} />
@@ -133,4 +121,12 @@ const TaskTable = () => {
   );
 };
 
-export default TaskTable;
+const ContextWrappedTaskTable = ({ project }: { project?: ProjectTypes }) => {
+  return (
+    <TaskTableProvider>
+      <TaskTable project={project} />
+    </TaskTableProvider>
+  );
+};
+
+export default ContextWrappedTaskTable;
