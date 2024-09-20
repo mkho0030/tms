@@ -46,7 +46,8 @@ export default async function handler(
     var memberData: any = [];
 
     Promise.all(memberDataPromises).then((data) => {
-      if (data) {
+      if (data.every(Boolean)) {
+        // filter out null values
         return res
           .status(200)
           .json({ data: { ...project, members: data }, message: "Success" });
