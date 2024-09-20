@@ -7,7 +7,7 @@
     "lint": "next lint",
     "test": "pnpm test:unit && pnpm test:integration",
     "test:integration": "playwright test",
-    "test:unit": "vitest run",
+    "test:unit": "vitest run --silent",
     "mongo:test": "docker run --rm -p 27018:27017 mongo:7.0.12",
     "playwright:install": "playwright install --with-deps chrome chromium"
   },
