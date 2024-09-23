@@ -2,7 +2,6 @@ import dayjs, {type Dayjs} from "dayjs";
 import { z } from "zod";
 
 export const createTaskSchema = z.object({
-  // project: z.custom<ProjectTypes>((val) => !val, 'Please add a project'),
   project_id: z.string().min(1, { message: "Field cannot be empty" }),
   name: z.string().min(1, { message: "Field cannot be empty" }),
   dueDate: z.string().datetime({message: "Invalid date"}),

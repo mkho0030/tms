@@ -9,9 +9,11 @@ export type TaskType = {
   startDate: Date;
   endDate: Date;
   assignees: string[];
-  children: TaskType[];
+  children: string[];
   status: 0 | 1 | 2;
 	projectId: string;
+  createdOn?: Date;
+  updatedOn?: Date;
 };
 
 export const addTaskToProject = async (
@@ -20,7 +22,7 @@ export const addTaskToProject = async (
   dueDate: string,
   assignees?: string[],
   description?: string
-): Promise<boolean> => {
+): Promise<TaskType> => {
 	const task: TaskType = {
 		_id: uuidv4(),
 		name: taskName,
@@ -44,8 +46,8 @@ export const addTaskToProject = async (
 
 	const taskCol = db.collection<TaskType>("TaskData");
 	await taskCol.insertOne(task);
-
-	return result.matchedCount === 1;
+  
+	return task;
 }
 
 export const getTasksById = async (

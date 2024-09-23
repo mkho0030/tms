@@ -8,7 +8,8 @@ type TaskContextType = {
   isLoading: boolean;
   task: TaskTypes | undefined;
   deleteTask: (tasksId: string) => void;
-  updateTask: (task: TaskTypes) => void;
+  updateTask: (task: TaskType) => void;
+  generateIcal: () => void;
   refetchData: () => void;
 };
 
@@ -16,8 +17,9 @@ const initialState = {
   isLoading: true,
   task: undefined,
   deleteTask: async (taskId: string) => {},
-  updateTask: async (task: TaskTypes) => {},
-  refetchData: () => {}
+  updateTask: async (task: TaskType) => {},
+  generateIcal: async () => {},
+  refetchData: () => {},
 };
 
 const TaskContext = createContext<TaskContextType>(initialState);
@@ -44,12 +46,12 @@ export const TaskProvider: React.FC<{
   const refetchData = () => {
     setIsLoading(true);
     fetchData()
-        .then((data) => {
-          setTask(data.data);
-          setIsLoading(false);
-        })
-        .catch(console.error);
-  }
+      .then((data) => {
+        setTask(data.data);
+        setIsLoading(false);
+      })
+      .catch(console.error);
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -95,7 +97,7 @@ export const TaskProvider: React.FC<{
     }
   };
 
-  const updateTask = async (task: TaskTypes) => {
+  const updateTask = async (task: TaskType) => {
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_APP_URL}/api/tasks/update`,
@@ -121,12 +123,36 @@ export const TaskProvider: React.FC<{
     }
   };
 
+  const generateIcal = async () => {
+    try {
+      const iCalRes = await fetch(
+        `${process.env.NEXT_PUBLIC_APP_URL}/api/ical/generate`
+      );
+      const iCalData = await iCalRes.json();
+
+      const ical = await fetch(iCalData.url);
+      const { data } = await ical.json();
+
+      
+      console.log(data)
+      const element = document.createElement("a");
+      const file = new File([data], "event.ics");
+      element.href = URL.createObjectURL(file);
+      element.download = `event.ics`;
+      document.body.appendChild(element);
+      element.click();
+    } catch (error) {
+      console.log(error)
+    }
+  };
+
   const value = {
     isLoading,
     task,
     deleteTask,
     updateTask,
-    refetchData
+    generateIcal,
+    refetchData,
   };
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
 };

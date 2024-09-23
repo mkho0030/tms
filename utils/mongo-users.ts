@@ -6,6 +6,7 @@ export type UserType = {
   name: string;
   email: string;
   photoUrl: string;
+  settings?: Object;
 };
 
 

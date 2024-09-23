@@ -2,6 +2,7 @@ import React from "react";
 import AppDrawer, { drawerWidth } from "../components/AppDrawer";
 import AppBar from "../components/AppBar";
 import { Box, Grid } from "@mui/material";
+import { TaskListProvider } from "../logics/providers/TaskListContext";
 
 // Layout of most pages except for the auth pages.
 // Contains the side navigation bar and application bar
@@ -14,7 +15,7 @@ const Layout: React.FC<any> = ({ children }) => {
       <Box sx={{ width: `calc(100% - ${drawerWidth}px)` }}>
         <AppBar />
         <Grid container pl={"24px"} pr={"24px"}>
-          {children}
+          <TaskListProvider>{children}</TaskListProvider>
         </Grid>
       </Box>
     </Box>

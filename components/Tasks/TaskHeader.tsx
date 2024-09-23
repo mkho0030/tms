@@ -2,10 +2,6 @@ import React, { useState } from "react";
 import {
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   IconButton,
   TextField,
   Typography,
@@ -14,14 +10,15 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useTask } from "../../logics/providers/TaskContext";
 import { Close, Edit, SaveAlt } from "@mui/icons-material";
-import { UserTypes } from "../../types/db-data";
+import { TaskTypes } from "../../types/db-data";
 import DeleteTask from "./TaskDialogs/DeleteTask";
+import { UserType } from "../../utils/mongo-users";
 
 const TaskHeader: React.FC<{}> = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [onEdit, setOnEdit] = useState<boolean>(false);
 
-  const { isLoading, task, deleteTask, updateTask, refetchData } = useTask();
+  const { isLoading, task, deleteTask, updateTask, refetchData, generateIcal } = useTask();
 
   const handleClose = () => {
     setIsOpen(false);
@@ -41,8 +38,11 @@ const TaskHeader: React.FC<{}> = () => {
         ...task,
         // @ts-expect-error
         assignees: task?.assignees.map(
-          (assigned) => (assigned as UserTypes).uid
+          (assigned) => (assigned as UserType).uid
         ),
+        children: task?.children?.map(
+          (subTask) => (subTask as TaskTypes)._id
+        ) || [],
         name: e.target.name.value,
       });
 
@@ -99,7 +99,7 @@ const TaskHeader: React.FC<{}> = () => {
       </Box>
 
       <Box display="flex" gap="20px">
-        <Button variant="text" color="primary" disabled={isLoading}>
+        <Button variant="text" color="primary" disabled={isLoading} onClick={generateIcal}>
           <CalendarTodayIcon sx={{ marginRight: "8px" }} />
           Add to calendar
         </Button>

@@ -1,9 +1,9 @@
 import { Close } from "@mui/icons-material";
 import { Box, Button, DialogActions, DialogContent, DialogTitle, IconButton, Typography } from "@mui/material";
-import { useTaskTable } from "../../../logics/providers/TaskTableContext";
+import { useTaskList } from "../../../logics/providers/TaskListContext";
 
 export const DeleteTask = ({ handleClose }: { handleClose: any }) => {
-  const {selected, deleteTasks} = useTaskTable();
+  const {selected, deleteTasks} = useTaskList();
 
   const handleOnDelete = async () => {
     await deleteTasks(selected);

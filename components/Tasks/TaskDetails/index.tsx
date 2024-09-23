@@ -13,7 +13,7 @@ import {
   TextField,
 } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import { UserTypes } from "../../../types/db-data";
+import { TaskTypes } from "../../../types/db-data";
 import ProgressStatus from "../../ProgressStatus";
 import dayjs, { Dayjs } from "dayjs";
 import { useTask } from "../../../logics/providers/TaskContext";
@@ -23,11 +23,13 @@ import {
   AccessTimeRounded,
   Close,
   DoneRounded,
+  Edit,
   EditCalendar,
   KeyboardArrowDown,
   PriorityHighRounded,
   SaveAlt,
 } from "@mui/icons-material";
+import { UserType } from "../../../utils/mongo-users";
 
 const TaskDetails: React.FC = () => {
   const { isLoading, task, updateTask, refetchData } = useTask();
@@ -40,8 +42,11 @@ const TaskDetails: React.FC = () => {
   };
 
   const [editAssigned, setEditAssigned] = useState<boolean>(false);
-  const [options, setOptions] = useState<UserTypes[]>([]);
-  const [currentAssigned, setCurrentAssigned] = useState<UserTypes[]>([]);
+  const [options, setOptions] = useState<UserType[]>([]);
+  const [currentAssigned, setCurrentAssigned] = useState<UserType[]>([]);
+
+  const [editDescription, setEditDescription] = useState<boolean>(false);
+  const [currentDescription, setCurrentDescription] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,9 +60,12 @@ const TaskDetails: React.FC = () => {
     fetchData()
       .then((res) => {
         setOptions(res.members);
-        setCurrentAssigned(task?.assignees as UserTypes[]);
+        setCurrentAssigned(task?.assignees as UserType[]);
+        setCurrentDescription(task?.description as string);
       })
       .catch(console.error);
+
+    console.log(task)
     return () => {};
   }, [task]);
 
@@ -67,8 +75,11 @@ const TaskDetails: React.FC = () => {
         ...task,
         // @ts-expect-error
         assignees: task?.assignees.map(
-          (assigned) => (assigned as UserTypes).uid
+          (assigned) => (assigned as UserType).uid
         ),
+        children: task?.children?.map(
+          (subTask) => (subTask as TaskTypes)._id
+        ) || [],
         status: status,
       });
 
@@ -79,13 +90,15 @@ const TaskDetails: React.FC = () => {
 
   const handleUpdateDate = async (date: Dayjs) => {
     try {
-      
       const res = await updateTask({
         ...task,
         // @ts-expect-error
         assignees: task?.assignees.map(
-          (assigned) => (assigned as UserTypes).uid
+          (assigned) => (assigned as UserType).uid
         ),
+        children: task?.children?.map(
+          (subTask) => (subTask as TaskTypes)._id
+        ) || [],
         // @ts-expect-error
         endDate: date.toISOString(),
       });
@@ -101,12 +114,36 @@ const TaskDetails: React.FC = () => {
       const res = await updateTask({
         ...task,
         assignees: currentAssigned.map((member) => member.uid),
+        children: task?.children?.map(
+          (subTask) => (subTask as TaskTypes)._id
+        ) || [],
       });
 
       setAnchorEl(null);
       refetchData();
     } catch (error) {}
   };
+
+  const handleUpdateDescription = async () => {
+    try{
+      const res = await updateTask({
+        ...task,
+        // @ts-expect-error
+        assignees: task?.assignees.map(
+          (assigned) => (assigned as UserType).uid
+        ),
+        description: currentDescription,
+        children: task?.children?.map(
+          (subTask) => (subTask as TaskTypes)._id
+        ) || [],
+      });
+
+      setAnchorEl(null);
+      refetchData();
+    }catch(error) {
+
+    }
+  }
 
   return (
     <>
@@ -194,14 +231,14 @@ const TaskDetails: React.FC = () => {
           <>
             <Autocomplete
               multiple
-              sx={{flex: '1 0 auto'}}
+              sx={{ flex: "1 0 auto" }}
               value={currentAssigned}
               onChange={(event, selectedOptions) => {
                 setCurrentAssigned(selectedOptions);
               }}
               options={options}
               getOptionLabel={(option) => option.uid}
-              renderTags={(value: readonly UserTypes[], getTagProps) =>
+              renderTags={(value: readonly UserType[], getTagProps) =>
                 value.map((option, index: number) => {
                   const { key, ...tagProps } = getTagProps({ index });
                   return (
@@ -250,12 +287,12 @@ const TaskDetails: React.FC = () => {
                 <Chip
                   avatar={
                     <Avatar
-                      alt={(assigned as UserTypes).name}
-                      src={(assigned as UserTypes).photoUrl}
+                      alt={(assigned as UserType).name}
+                      src={(assigned as UserType).photoUrl}
                     />
                   }
                   variant="outlined"
-                  label={(assigned as UserTypes).name}
+                  label={(assigned as UserType).name}
                   key={index}
                 />
               </Box>
@@ -266,26 +303,36 @@ const TaskDetails: React.FC = () => {
           </>
         )}
       </Box>
-
-      <Box
-        display="flex"
-        justifyContent="flex-start"
-        alignItems="center"
-        mt={2}
-      >
-        <Typography variant="subtitle1" color="grey.600">
-          Description:
-        </Typography>
-      </Box>
-      <Box
-        display="flex"
-        justifyContent="flex-start"
-        alignItems="center"
-        mt={2}
-      >
-        <Typography variant="body1">
-          {task?.description ? task?.description : "No description"}
-        </Typography>
+      <Typography mt={2} variant="subtitle1" color="grey.600">
+        Description:
+      </Typography>
+      <Box display="flex" justifyContent="flex-start" alignItems="center">
+        {editDescription ? (
+          <>
+            <TextField
+              multiline
+              fullWidth
+              value={currentDescription}
+              onChange={(e) => setCurrentDescription(e.target.value)}
+              rows={4}
+            />
+            <IconButton type="submit" onClick={() => handleUpdateDescription()}>
+              <SaveAlt />
+            </IconButton>
+            <IconButton onClick={() => setEditDescription(false)}>
+              <Close />
+            </IconButton>
+          </>
+        ) : (
+          <>
+            <Typography variant="body1">
+              {task?.description ? task?.description : "No description"}
+            </Typography>
+            <IconButton onClick={() => setEditDescription(true)}>
+              <Edit />
+            </IconButton>
+          </>
+        )}
       </Box>
     </>
   );

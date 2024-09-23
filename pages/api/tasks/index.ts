@@ -4,6 +4,7 @@ import {
   addTaskToProject,
   getTasksById,
   getTasksByUser,
+  TaskType,
 } from "../../../utils/mongo-tasks";
 import { getProjectById } from "../../../utils/mongo-projects";
 import { getUser } from "../../../utils/mongo-users";
@@ -17,7 +18,7 @@ export default async function handler(
     return res.status(401);
   }
 
-  // create team
+  // create task
   if (req.method === "POST") {
     const { project_id, name, dueDate, assignees, description } = JSON.parse(
       req.body
@@ -30,7 +31,7 @@ export default async function handler(
       description
     );
 
-    return res.status(201).json(newTask);
+    return res.status(201).json({data: newTask, message: 'Task Created Successfully'});
   }
 
   // get teams that user belongs to
@@ -42,12 +43,7 @@ export default async function handler(
       if (!task || task == null)
         return res.status(404).json({ message: "Task not found" });
 
-      const resData = await {
-        ...task,
-        assignees: await Promise.all(
-          task.assignees.map((assigned) => getUser(assigned))
-        ),
-      };
+      const resData = await getFullTaskDetails(task);
 
       return res.status(200).json({ data: resData });
     }
@@ -63,22 +59,13 @@ export default async function handler(
 
       if (tasks.length != 0) {
         resTasks = await Promise.all(
-          tasks.map(
-            async (task) =>
-              task != null && {
-                ...task,
-                assignees: await Promise.all(
-                  task.assignees.map((assigned) => getUser(assigned))
-                ),
-              }
-          )
+          tasks.map(async (task) => task != null && getFullTaskDetails(task))
         );
       }
 
       return res.status(200).json({ data: resTasks });
     }
 
-    console.log(uid);
     const tasks = await getTasksByUser(uid);
 
     if (tasks == null) {
@@ -89,17 +76,25 @@ export default async function handler(
 
     if (tasks.length != 0) {
       resTasks = await Promise.all(
-        tasks.map(
-          async (task) =>
-            task != null && {
-              ...task,
-              assignees: await Promise.all(
-                task.assignees.map((assigned) => getUser(assigned))
-              ),
-            }
-        )
+        tasks.map(async (task) => task != null && getFullTaskDetails(task))
       );
     }
     return res.status(200).json({ data: resTasks });
   }
 }
+
+const getFullTaskDetails: any = async (task: TaskType) => {
+  const subTask = await Promise.all(
+    task?.children?.map((subTaskId) => getTasksById(subTaskId))
+  );
+
+  return {
+    ...task,
+    assignees: await Promise.all(
+      task.assignees.map((assigned) => getUser(assigned))
+    ),
+    children: await Promise.all(
+      subTask.map((subTask) => getFullTaskDetails(subTask))
+    ),
+  };
+};

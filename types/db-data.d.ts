@@ -1,23 +1,17 @@
-export interface UserTypes {
-  uid: string;
-  name: string;
-  email: string;
-  photoUrl: string;
-  settings: Object;
-}
+import { UserType } from "../utils/mongo-users";
 
 export  interface TaskTypes {
   _id: string;
   name: string;
-  status: 0 | 1 | 2;
-  assignees: string[] | UserTypes [];
-  description: string;
-  subtasks?: string[];
+  description?: string;
   startDate: Date;
   endDate: Date;
+  assignees: UserType [];
+  children?: TaskTypes[];
+  status: 0 | 1 | 2;
+  projectId: string;  
   createdOn: Date;
   updatedOn: Date;
-  projectId: string;
 }
 
 export interface ProjectTypes {

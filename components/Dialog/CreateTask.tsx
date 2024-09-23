@@ -1,11 +1,10 @@
 import { Dayjs } from "dayjs";
-import { ProjectTypes, UserTypes } from "../../../types/db-data";
+import { ProjectTypes } from "../../types/db-data";
 import { Controller, useForm } from "react-hook-form";
-import { createTaskSchema } from "../../Form/taskSchemas";
+import { createTaskSchema } from "../Form/taskSchemas";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import {
   Autocomplete,
   Avatar,
@@ -27,7 +26,8 @@ import { Close } from "@mui/icons-material";
 import { TextFieldElement } from "react-hook-form-mui";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useTaskList } from "../../../logics/providers/TaskListContext";
+import { UserType } from "../../utils/mongo-users";
+import { useRouter } from "next/router";
 
 type createFormControl = {
   project_id?: string | undefined;
@@ -36,10 +36,12 @@ type createFormControl = {
 
 export const CreateTask = ({
   handleClose,
-  project,
+  projectId,
+  onSubmit,
 }: {
   handleClose: any;
-  project?: ProjectTypes;
+  projectId?: string;
+  onSubmit: (values: z.infer<typeof createTaskSchema>) => void;
 }) => {
   const {
     control,
@@ -56,9 +58,41 @@ export const CreateTask = ({
   });
 
   const [projects, setProjects] = useState<ProjectTypes[]>([]);
-  const [options, setOptions] = useState<UserTypes[]>([]);
+  const [options, setOptions] = useState<UserType[]>([]);
 
-  const { submitCreateTaskForm } = useTaskList();
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_APP_URL}/api/projects`
+      );
+      if (!res.ok) {
+        throw new Error("Failed to fetch projects");
+      }
+      const data = await res.json();
+      console.log(data);
+      return data;
+    };
+
+    fetchData()
+      .then((res: ProjectTypes[]) => {
+        if (projectId) {
+          console.log(projectId);
+          const currentProj = res.find((proj) => proj._id == projectId);
+          if (currentProj) {
+            setProjects([currentProj]);
+            setOptions(currentProj.members);
+            setFormControl({ ...formControl, project_id: projectId });
+          }
+        } else {
+          setProjects(res);
+        }
+      })
+      .catch(console.error);
+
+    return () => {};
+  }, []);
 
   useEffect(() => {
     if (formControl?.project_id) {
@@ -68,7 +102,6 @@ export const CreateTask = ({
           `${process.env.NEXT_PUBLIC_APP_URL}/api/projects?id=${formControl.project_id}`
         );
         const data = await res.json();
-        console.log(data);
         return data;
       };
 
@@ -84,40 +117,6 @@ export const CreateTask = ({
 
     return () => {};
   }, [formControl]);
-
-  useEffect(() => {
-    if (project) {
-      setProjects([project]);
-      setOptions(project.members);
-      setFormControl({ ...formControl, project_id: project._id });
-    } else {
-      //
-      const fetchData = async () => {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_APP_URL}/api/projects`
-        );
-        if (!res.ok) {
-          throw new Error("Failed to fetch projects");
-        }
-        const data = await res.json();
-        console.log(data);
-        return data;
-      };
-
-      fetchData()
-        .then((res) => setProjects(res))
-        .catch(console.error);
-    }
-    return () => {};
-  }, []);
-
-  const onSubmit = async (values: z.infer<typeof createTaskSchema>) => {
-    try {
-      await submitCreateTaskForm(values);
-      reset();
-      handleClose();
-    } catch (error) {}
-  };
 
   return (
     <>
@@ -142,7 +141,7 @@ export const CreateTask = ({
             <InputLabel id="project_id">Project</InputLabel>
             <Select
               labelId="project_id"
-              disabled={project && true}
+              disabled={router.pathname.split("/")[1] == "teams"}
               label="Project"
               value={formControl?.project_id}
               onChange={(val) =>
@@ -213,7 +212,7 @@ export const CreateTask = ({
                   onBlur={onBlur}
                   options={options}
                   getOptionLabel={(option) => option.uid}
-                  renderTags={(value: readonly UserTypes[], getTagProps) =>
+                  renderTags={(value: readonly UserType[], getTagProps) =>
                     value.map((option, index: number) => {
                       const { key, ...tagProps } = getTagProps({ index });
                       return (

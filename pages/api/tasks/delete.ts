@@ -1,6 +1,6 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 import { getRequestUser } from "../../../utils/auth-utils";
-import { deleteTaskFromProject, getTasksById, updateTaskInProject } from "../../../utils/mongo-tasks";
+import { deleteTaskFromProject, getTasksById } from "../../../utils/mongo-tasks";
 import { TaskTypes } from "../../../types/db-data";
 
 export default async function handler(
