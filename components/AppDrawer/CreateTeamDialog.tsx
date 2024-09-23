@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import useIsOpen from "../../logics/hooks/useIsOpen";
 import {
-  Autocomplete,
   Box,
   Button,
   Dialog,
@@ -12,7 +11,6 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  TextField,
 } from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
 import { useForm } from "react-hook-form";

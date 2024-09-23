@@ -11,6 +11,8 @@ import { z } from "zod";
 import { ProjectTypes, TaskTypes } from "../../types/db-data";
 import { useRouter } from "next/router";
 import { useToast } from "./ToastContext";
+import { UserType } from "../../utils/mongo-users";
+import dayjs from "dayjs";
 
 //Functionality
 // Search for task name
@@ -24,38 +26,48 @@ import { useToast } from "./ToastContext";
 // - Delete task
 
 interface TaskTableContextType {
+  //Loading State
+  isLoading: boolean;
+
   //Filter searching
-  search: string;
-  setSearch: Dispatch<SetStateAction<string>>;
   filters: FilterType;
   setFilters: Dispatch<SetStateAction<FilterType>>;
+
   //Get task List
   taskList: TaskTypes[] | undefined;
-  //select
+  filteredList: TaskTypes[] | undefined;
+  projectData: ProjectTypes | undefined;
+
+  //selected Task for processing
   selected: string[];
   handleClick: (event: React.MouseEvent<unknown>, id: string) => void;
   handleSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  isLoading: boolean;
-  submitCreateTaskForm: (values: z.infer<typeof createTaskSchema>) => void;
+
+  // Task Processing
+  submitCreateTaskForm: (values: z.infer<typeof createTaskSchema>) => unknown;
   updateStatus: (tasksIds: string[], status: number) => void;
   deleteTasks: (tasksIds: string[]) => void;
 }
 
 interface FilterType {
-  assigned: string;
+  search: string;
+  assigned: UserType[];
   dueBy: number;
-  status: string;
+  status: number;
 }
 
 const initialState = {
   search: "",
   setSearch: () => {},
   filters: {
-    assigned: "",
+    search: "",
+    assigned: [],
     dueBy: 0,
-    status: "",
+    status: 0,
   },
   taskList: [],
+  filteredList: [],
+  projectData: undefined,
   selected: [],
   handleClick: () => {},
   handleSelectAllClick: () => {},
@@ -69,18 +81,16 @@ const initialState = {
 
 const TaskTableContext = createContext<TaskTableContextType>(initialState);
 
-export const TaskTableProvider: React.FC<{
+export const TaskListProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [search, setSearch] = useState("");
-  const [filters, setFilters] = useState<FilterType>({
-    assigned: "",
-    dueBy: 0,
-    status: "",
-  });
-
   const [isLoading, setIsLoading] = useState(false);
-  const [taskList, setTaskList] = useState<TaskTypes[]>(initialState.taskList);
+
+  const [filters, setFilters] = useState<FilterType>(initialState.filters);
+
+  const [taskList, setTaskList] = useState<TaskTypes[]>();
+  const [filteredList, setFilteredList] = useState<TaskTypes[]>();
+  const [projectData, setProjectData] = useState();
 
   const router = useRouter();
   const { setToast } = useToast();
@@ -92,9 +102,9 @@ export const TaskTableProvider: React.FC<{
     setIsLoading(true);
     const pagePath = router.pathname.split("/");
     if (pagePath[1] === "teams") {
-      const { teamId } = router.query;
+      const { teamId, taskId } = router.query;
 
-      const fetchData = async () => {
+      const fetchTaskData = async () => {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_APP_URL}/api/tasks?projectId=${teamId}`,
           {
@@ -102,15 +112,28 @@ export const TaskTableProvider: React.FC<{
           }
         );
         const { data } = await res.json();
+        return data;
+      };
+
+      const fetchProjectData = async () => {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_APP_URL}/api/projects?id=${teamId}`
+        );
+        const {data} = await res.json();
         console.log(data);
         return data;
       };
 
-      fetchData().then((data) => {
+      fetchTaskData().then((data) => {
         setTaskList(data);
-        setIsLoading(false);
+        fetchProjectData().then((data) => {
+          setProjectData(data);
+          setIsLoading(false);
+          setFilters(initialState.filters);
+        });
       });
-    } else {
+    }
+    else {
       const fetchData = async () => {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_APP_URL}/api/tasks`,
@@ -119,18 +142,78 @@ export const TaskTableProvider: React.FC<{
           }
         );
         const { data } = await res.json();
-        console.log(data);
         return data;
       };
 
       fetchData().then((data) => {
         setTaskList(data);
         setIsLoading(false);
+        setFilters(initialState.filters);
       });
     }
 
     return () => {};
   }, [router]);
+
+  useEffect(() => {
+    let list = taskList;
+
+    if (filters.search.length !== 0) {
+      list = list?.filter((task) =>
+        task.name.toLowerCase().includes(filters.search.toLowerCase())
+      );
+    }
+
+    if (filters.assigned.length != 0) {
+      filters.assigned.map((selectedAssignees) => {
+        list = list?.filter((task) =>
+          task.assignees.some(
+            (assignees) => assignees.uid == selectedAssignees.uid
+          )
+        );
+      });
+    }
+
+    if (filters.dueBy != 0) {
+      const today = dayjs();
+      if (filters.dueBy == 1) {
+        list = list?.filter(
+          (task) =>
+            dayjs(task.endDate).isAfter(today) &&
+            dayjs(task.endDate).isBefore(today.add(1, "day"))
+        );
+      }
+      if (filters.dueBy == 2) {
+        list = list?.filter(
+          (task) =>
+            dayjs(task.endDate).isAfter(today) &&
+            dayjs(task.endDate).isBefore(today.add(7, "day"))
+        );
+      }
+      if (filters.dueBy == 3) {
+        list = list?.filter(
+          (task) =>
+            dayjs(task.endDate).isAfter(today) &&
+            dayjs(task.endDate).isBefore(today.add(14, "day"))
+        );
+      }
+      if (filters.dueBy == 4) {
+        list = list?.filter(
+          (task) =>
+            dayjs(task.endDate).isAfter(today) &&
+            dayjs(task.endDate).isBefore(today.add(1, "month"))
+        );
+      }
+    }
+
+    if (filters.status !== 0) {
+      list = list?.filter((task) => task.status == filters.status - 1);
+    }
+
+    setFilteredList(list);
+
+    return () => {};
+  }, [filters, taskList]);
 
   const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
     event.stopPropagation();
@@ -154,8 +237,8 @@ export const TaskTableProvider: React.FC<{
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = taskList.map((n) => n._id);
-      setSelected(newSelected);
+      const newSelected = filteredList?.map((n) => n._id);
+      if (newSelected) setSelected(newSelected);
       return;
     }
     setSelected([]);
@@ -176,9 +259,9 @@ export const TaskTableProvider: React.FC<{
       });
 
       const { data } = await res.json();
-
+      return data;
       // setIsLoading(false);
-      router.reload();
+      // router.reload();
     }
   };
 
@@ -232,11 +315,11 @@ export const TaskTableProvider: React.FC<{
   };
 
   const value = {
-    search,
-    setSearch,
+    taskList,
     filters,
     setFilters,
-    taskList,
+    filteredList,
+    projectData,
     isLoading,
     selected,
     handleClick,
@@ -253,7 +336,7 @@ export const TaskTableProvider: React.FC<{
   );
 };
 
-export const useTaskTable = () => {
+export const useTaskList = () => {
   const context = useContext(TaskTableContext);
 
   if (context === undefined)

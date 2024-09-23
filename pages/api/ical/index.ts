@@ -29,7 +29,7 @@ export default async function handler(
   const events: ICalEvent[] = tasks.map((task) => {
     return {
       id: task._id,
-      datetime: task.endDate,
+      datetime: new Date(task.endDate),
       createdOn: new Date(),
       updatedOn: new Date(),
       name: task.name,
@@ -37,5 +37,5 @@ export default async function handler(
     };
   });
   const icalString = generateICal(events);
-  return res.status(200).send(icalString);
+  return res.status(200).json({data:icalString});
 }

@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
+  Avatar,
+  AvatarGroup,
   Box,
   Checkbox,
   Paper,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -16,20 +19,17 @@ import TaskRow from "./TaskRow";
 import rows from "../../mock/tasks.json";
 import { InfoOutlined } from "@mui/icons-material";
 import { ProjectTypes } from "../../types/db-data";
-import {
-  TaskTableProvider,
-  useTaskTable,
-} from "../../logics/providers/TaskTableContext";
+import { useTaskList } from "../../logics/providers/TaskListContext";
 import TableToolbar from "./TableToolbar";
 
 const TaskTable = ({ project }: { project?: ProjectTypes }) => {
-  const { 
-    taskList, 
-    isLoading, 
-    selected, 
-    handleClick, 
-    handleSelectAllClick } =
-  useTaskTable();
+  const {
+    filteredList,
+    isLoading,
+    selected,
+    handleClick,
+    handleSelectAllClick,
+  } = useTaskList();
   const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
   return (
@@ -81,37 +81,78 @@ const TaskTable = ({ project }: { project?: ProjectTypes }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {!isLoading && taskList && taskList.length != 0 ? (
-                taskList.map((task, index) => (
-                  <TaskRow
-                    key={index}
-                    tasks={task}
-                    handleChecked={handleClick}
-                    isSelected={isSelected}
-                  />
-                ))
+              {!isLoading ? (
+                filteredList && filteredList.length != 0 ? (
+                  filteredList.map((task, index) => (
+                    <TaskRow
+                      key={index}
+                      tasks={task}
+                      handleChecked={handleClick}
+                      isSelected={isSelected}
+                    />
+                  ))
+                ) : (
+                  // No task found
+                  <TableRow sx={{ height: "100%" }}>
+                    <TableCell colSpan={5}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          alignContent: "center",
+                          py: 20,
+                        }}
+                      >
+                        <InfoOutlined sx={{ height: 64, width: 64 }} />
+                        <Typography variant="h4" textAlign={"center"}>
+                          No Task found
+                        </Typography>
+                        <Typography variant="body1" textAlign={"center"}>
+                          Please add new task to start!
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                )
               ) : (
-                <TableRow sx={{ height: "100%" }}>
-                  <TableCell colSpan={5}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        alignContent: "center",
-                        py: 20,
-                      }}
-                    >
-                      <InfoOutlined sx={{ height: 64, width: 64 }} />
-                      <Typography variant="h4" textAlign={"center"}>
-                        No Task found
+                // Loading
+                ["", "", "", ""].map(() => (
+                  <TableRow>
+                    <TableCell padding="checkbox">
+                      <Checkbox color="primary" disabled />
+                    </TableCell>
+                    <TableCell>
+                      <Typography>
+                        <Skeleton />
                       </Typography>
-                      <Typography variant="body1" textAlign={"center"}>
-                        Please add new task to start!
+                    </TableCell>
+                    <TableCell>
+                      <AvatarGroup
+                        max={4}
+                        spacing={"small"}
+                        sx={{ justifyContent: "flex-end" }}
+                      >
+                        {["", "", "", ""].map(() => (
+                          <Skeleton
+                            variant="circular"
+                            sx={{ width: 32, height: 32, marginLeft: "-8px" }}
+                          >
+                            <Avatar />
+                          </Skeleton>
+                        ))}
+                      </AvatarGroup>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>
+                        <Skeleton />
                       </Typography>
-                    </Box>
-                  </TableCell>
-                </TableRow>
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="rounded" width={120} height={24} />
+                    </TableCell>
+                  </TableRow>
+                ))
               )}
             </TableBody>
           </Table>
@@ -121,12 +162,4 @@ const TaskTable = ({ project }: { project?: ProjectTypes }) => {
   );
 };
 
-const ContextWrappedTaskTable = ({ project }: { project?: ProjectTypes }) => {
-  return (
-    <TaskTableProvider>
-      <TaskTable project={project} />
-    </TaskTableProvider>
-  );
-};
-
-export default ContextWrappedTaskTable;
+export default TaskTable;

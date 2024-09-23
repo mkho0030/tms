@@ -21,10 +21,16 @@ import TableDialog from "../TableDialog";
 import useIsOpen from "../../../logics/hooks/useIsOpen";
 import { ProjectTypes } from "../../../types/db-data";
 import FilterBar from "./FilterBar";
-import { useTaskTable } from "../../../logics/providers/TaskTableContext";
+import { useTaskList } from "../../../logics/providers/TaskListContext";
 
-const TableToolbar = ({ isSelected, project }: { isSelected: any, project?: ProjectTypes }) => {
-  const {search, setSearch, selected, updateStatus} = useTaskTable();
+const TableToolbar = ({
+  isSelected,
+  project,
+}: {
+  isSelected: any;
+  project?: ProjectTypes;
+}) => {
+  const { filters, setFilters, selected, updateStatus } = useTaskList();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -44,7 +50,7 @@ const TableToolbar = ({ isSelected, project }: { isSelected: any, project?: Proj
   const handleStatusUpdate = async (status: number) => {
     await updateStatus(selected, status);
     handleMenuClose();
-  }
+  };
 
   const { isOpen, handleOpen, handleClose } = useIsOpen();
 
@@ -57,9 +63,8 @@ const TableToolbar = ({ isSelected, project }: { isSelected: any, project?: Proj
         {/* Search bar */}
         <TextField
           sx={{ width: "40%", maxWidth: "250px" }}
-          size="small"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={filters.search}
+          onChange={(e) => setFilters({ ...filters, search: e.target.value })}
           variant="outlined"
           label="Search"
         />
@@ -67,9 +72,8 @@ const TableToolbar = ({ isSelected, project }: { isSelected: any, project?: Proj
         <FilterBar project={project} />
       </Box>
       <Button
-        sx={{ height: "40px" }}
         variant={isSelected ? "contained" : "outlined"}
-        size="medium"
+        size="large"
         onClick={(e) => (isSelected ? handleMenuOpen(e) : handleOpen())}
       >
         {isSelected ? (

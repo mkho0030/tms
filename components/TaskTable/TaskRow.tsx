@@ -27,7 +27,9 @@ const TaskRow = ({
       id={tasks._id}
       hover
       onClick={() =>
-        router.push(`${process.env.NEXT_PUBLIC_APP_URL}/teams/${tasks.projectId}/${tasks._id}`)
+        router.push(
+          `${process.env.NEXT_PUBLIC_APP_URL}/teams/${tasks.projectId}/${tasks._id}`
+        )
       }
       selected={isSelected(tasks._id)}
       role="checkbox"

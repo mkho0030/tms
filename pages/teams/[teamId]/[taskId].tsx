@@ -51,16 +51,7 @@ const EditTask: NextPage = () => {
         >
           <TaskHeader />
           <TaskDetails />
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="flex-start"
-            mt={4}
-            gap="40px"
-          >
-            <Subtasks />
-            <Discussion />
-          </Box>
+          <Subtasks />
         </Paper>
       )}
     </>
