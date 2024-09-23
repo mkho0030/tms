@@ -1,5 +1,5 @@
 import { Dayjs } from "dayjs";
-import { ProjectTypes, UserTypes } from "../../../types/db-data";
+import { ProjectTypes } from "../../../types/db-data";
 import { Controller, useForm } from "react-hook-form";
 import { createTaskSchema } from "../../Form/taskSchemas";
 import { z } from "zod";
@@ -28,6 +28,7 @@ import { TextFieldElement } from "react-hook-form-mui";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useTaskList } from "../../../logics/providers/TaskListContext";
+import { UserType } from "../../../utils/mongo-users";
 
 type createFormControl = {
   project_id?: string | undefined;
@@ -56,7 +57,7 @@ export const CreateTask = ({
   });
 
   const [projects, setProjects] = useState<ProjectTypes[]>([]);
-  const [options, setOptions] = useState<UserTypes[]>([]);
+  const [options, setOptions] = useState<UserType[]>([]);
 
   const { submitCreateTaskForm } = useTaskList();
 
@@ -213,7 +214,7 @@ export const CreateTask = ({
                   onBlur={onBlur}
                   options={options}
                   getOptionLabel={(option) => option.uid}
-                  renderTags={(value: readonly UserTypes[], getTagProps) =>
+                  renderTags={(value: readonly UserType[], getTagProps) =>
                     value.map((option, index: number) => {
                       const { key, ...tagProps } = getTagProps({ index });
                       return (

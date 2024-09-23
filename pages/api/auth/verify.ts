@@ -19,7 +19,6 @@ export default async function handler(
       const decodeToken = await auth.verifyIdToken(idToken.value);
       const uid = decodeToken.uid;
 
-      console.info(uid);
       res.status(200).json({ message: "Verified, Please proceed." });
     } catch (error) {
       return res

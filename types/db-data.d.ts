@@ -16,7 +16,7 @@ export  interface TaskTypes {
 
 export interface ProjectTypes {
   _id: string;
-  members: UserTypes[];
+  members: UserType[];
   tasks: string[];
   name: string;
   icon: string;
