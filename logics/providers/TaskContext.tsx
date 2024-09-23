@@ -9,6 +9,7 @@ type TaskContextType = {
   task: TaskTypes | undefined;
   deleteTask: (tasksId: string) => void;
   updateTask: (task: TaskType) => void;
+  generateIcal: () => void;
   refetchData: () => void;
 };
 
@@ -17,6 +18,7 @@ const initialState = {
   task: undefined,
   deleteTask: async (taskId: string) => {},
   updateTask: async (task: TaskType) => {},
+  generateIcal: () => {},
   refetchData: () => {},
 };
 
@@ -149,6 +151,7 @@ export const TaskProvider: React.FC<{
     task,
     deleteTask,
     updateTask,
+    generateIcal,
     refetchData,
   };
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
