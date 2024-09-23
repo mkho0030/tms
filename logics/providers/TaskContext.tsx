@@ -9,7 +9,6 @@ type TaskContextType = {
   task: TaskTypes | undefined;
   deleteTask: (tasksId: string) => void;
   updateTask: (task: TaskType) => void;
-  generateIcal: () => void;
   refetchData: () => void;
 };
 
@@ -18,7 +17,6 @@ const initialState = {
   task: undefined,
   deleteTask: async (taskId: string) => {},
   updateTask: async (task: TaskType) => {},
-  generateIcal: async () => {},
   refetchData: () => {},
 };
 
@@ -39,7 +37,7 @@ export const TaskProvider: React.FC<{
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_APP_URL}/api/tasks?id=${taskId}`
     );
-    const data = await res.json();
+    const { data } = await res.json();
     return data;
   };
 
@@ -47,7 +45,7 @@ export const TaskProvider: React.FC<{
     setIsLoading(true);
     fetchData()
       .then((data) => {
-        setTask(data.data);
+        setTask(data);
         setIsLoading(false);
       })
       .catch(console.error);
@@ -59,7 +57,7 @@ export const TaskProvider: React.FC<{
     if (taskId) {
       fetchData()
         .then((data) => {
-          setTask(data.data);
+          setTask(data);
           setIsLoading(false);
         })
         .catch(console.error);
@@ -151,7 +149,6 @@ export const TaskProvider: React.FC<{
     task,
     deleteTask,
     updateTask,
-    generateIcal,
     refetchData,
   };
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;

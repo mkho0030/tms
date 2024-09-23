@@ -32,7 +32,7 @@ const AppDrawer: React.FC = () => {
       if (!res.ok) {
         throw new Error("Failed to fetch projects");
       }
-      const data = await res.json();
+      const { data } = await res.json();
       return data;
     };
 
@@ -81,7 +81,7 @@ const AppDrawer: React.FC = () => {
           }
         >
           {/* Get Project List from API */}
-          {projects.map((project, index) => (
+          {projects?.map((project, index) => (
             <ListItemButton
               key={index}
               selected={router.query.teamId == project._id}

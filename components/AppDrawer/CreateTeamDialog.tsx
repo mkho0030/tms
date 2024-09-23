@@ -29,14 +29,16 @@ const CreateTeamDialog: React.FC<{}> = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const { control, handleSubmit, reset } = useForm<z.infer<typeof createTeamSchema>>({
+  const { control, handleSubmit, reset } = useForm<
+    z.infer<typeof createTeamSchema>
+  >({
     resolver: zodResolver(createTeamSchema),
   });
 
-  const handleOnClose = () =>{
+  const handleOnClose = () => {
     reset();
     handleClose();
-  }
+  };
 
   const onSubmit = async (values: z.infer<typeof createTeamSchema>) => {
     try {
@@ -55,8 +57,8 @@ const CreateTeamDialog: React.FC<{}> = () => {
           type: "success",
         });
 
-        const data = await res.json();
-        
+        const { data } = await res.json();
+
         reset();
         setIsLoading(false);
         handleClose();

@@ -119,7 +119,7 @@ export const TaskListProvider: React.FC<{
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_APP_URL}/api/projects?id=${teamId}`
         );
-        const data = await res.json();
+        const {data} = await res.json();
         console.log(data);
         return data;
       };
@@ -132,7 +132,8 @@ export const TaskListProvider: React.FC<{
           setFilters(initialState.filters);
         });
       });
-    } else {
+    }
+    else {
       const fetchData = async () => {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_APP_URL}/api/tasks`,
@@ -141,7 +142,6 @@ export const TaskListProvider: React.FC<{
           }
         );
         const { data } = await res.json();
-        console.log(data);
         return data;
       };
 
@@ -258,7 +258,7 @@ export const TaskListProvider: React.FC<{
         type: "success",
       });
 
-      const data = await res.json();
+      const { data } = await res.json();
       return data;
       // setIsLoading(false);
       // router.reload();

@@ -13,16 +13,18 @@ export default async function handler(
 
   if (req.method === "POST") {
     const { id } = JSON.parse(req.body);
-    
+
     if (typeof id !== "string") {
-      return res.status(400).send({ error: "Invalid project ID" });
+      return res.status(400).send({ message: "Invalid project ID" });
     }
 
     const success = await addUserToProject(id, uid);
     if (!success) {
-      return res.status(500).send({ error: "Failed to join project" });
+      return res.status(500).send({ message: "Failed to join project" });
     }
 
-    return res.status(200).json({id: id}); // TODO: Replace / with path to correct project page
+    return res
+      .status(200)
+      .json({ data: { id: id }, message: "Joined project" }); // TODO: Replace / with path to correct project page
   }
 }

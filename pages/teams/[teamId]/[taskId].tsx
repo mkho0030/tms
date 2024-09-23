@@ -23,7 +23,7 @@ const EditTask: NextPage = () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_APP_URL}/api/projects?id=${teamId}`
       );
-      const data = await res.json();
+      const { data } = await res.json();
       console.log(data);
       return data;
     };

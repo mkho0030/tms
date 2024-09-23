@@ -80,7 +80,7 @@ function ResponsiveAppBar({
                     sx={{ width: 32, height: 32, marginLeft: '-8px' }}
                   ><Avatar/></Skeleton>
                 ))
-              : project?.members.map((member) => (
+              : project?.members?.map((member) => (
                   <Avatar
                     alt={member.name}
                     src={member.photoUrl}

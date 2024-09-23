@@ -68,7 +68,7 @@ export const CreateTask = ({
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_APP_URL}/api/projects?id=${formControl.project_id}`
         );
-        const data = await res.json();
+        const { data } = await res.json();
         console.log(data);
         return data;
       };
@@ -100,7 +100,7 @@ export const CreateTask = ({
         if (!res.ok) {
           throw new Error("Failed to fetch projects");
         }
-        const data = await res.json();
+        const { data } = await res.json();
         console.log(data);
         return data;
       };

@@ -45,7 +45,7 @@ const FilterBar = ({ project }: { project?: ProjectTypes }) => {
     }
 
     return () => {};
-  }, [taskList]);
+  }, [taskList, project]);
 
   const handleAssigneesChange = (event: SelectChangeEvent<UserType[]>) => {
     const {

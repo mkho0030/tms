@@ -53,7 +53,7 @@ const TaskDetails: React.FC = () => {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_APP_URL}/api/projects?id=${task?.projectId}`
       );
-      const data = await res.json();
+      const { data } = await res.json();
       return data;
     };
 

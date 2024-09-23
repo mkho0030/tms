@@ -9,7 +9,11 @@ const Teams: NextPage = () => {
  
   return (
     <>
-      <CustomToolbar isTask={false} project={projectData} isLoading={isLoading}/>
+      <CustomToolbar
+        isTask={false}
+        project={projectData}
+        isLoading={isLoading}
+      />
       <TaskTable project={projectData} />
     </>
   );

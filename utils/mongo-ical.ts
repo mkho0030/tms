@@ -7,7 +7,7 @@ export const getSubscribedProjectTasks = async (
   projectIds: string[]
 ): Promise<TaskType[]> => {
   const client = await clientPromise;
-  const db = client.db("TMS");
+  const db = client.db(process.env.DB_NAME || "TMS");
   const col = db.collection<TaskType>("TaskData");
   const result = await col
     .find({
@@ -20,7 +20,7 @@ export const getSubscribedProjectTasks = async (
 
 export const getJoinedProjects = async (uid: string) => {
   const client = await clientPromise;
-  const db = client.db("TMS");
+  const db = client.db(process.env.DB_NAME || "TMS");
   const col = db.collection<ProjectType>("ProjectData");
   const result = await col.find({ members: uid }).toArray();
   return result;
