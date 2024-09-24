@@ -12,11 +12,11 @@ export default async function handler(
 ) {
   const token = req.query.token;
   if (typeof token !== "string") {
-    return res.status(401).send("Token is missing");
+    return res.status(401).json({ message: "Token is missing" });
   }
   const info = verifyICalToken(token);
   if (!info) {
-    return res.status(401).send("Invalid token");
+    return res.status(401).json({ message: "Invalid token" });
   }
   const projects = await getJoinedProjects(info.uid);
   const tasks = await getSubscribedProjectTasks(info.uid, info.projectIds);
@@ -37,5 +37,5 @@ export default async function handler(
     };
   });
   const icalString = generateICal(events);
-  return res.status(200).send(icalString);
+  return res.status(200).json({ data: icalString, message: "Success" });
 }

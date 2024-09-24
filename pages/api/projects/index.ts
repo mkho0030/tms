@@ -13,7 +13,7 @@ export default async function handler(
 ) {
   const uid = await getRequestUser(req);
   if (!uid) {
-    return res.status(401);
+    return res.status(401).json({ message: "Unauthorised Access" });
   }
 
   // create team
@@ -23,7 +23,7 @@ export default async function handler(
     const newProject = await createProject(name);
     await addUserToProject(newProject._id, uid);
 
-    return res.status(201).json(newProject);
+    return res.status(201).json({data: newProject, message: "Success"});
   }
 
   // get teams that user belongs to
@@ -32,12 +32,12 @@ export default async function handler(
 
     if (!id) {
       const projects = await getProjectsForUser(uid);
-      return res.status(200).json(projects);
+      return res.status(200).json({data: projects, message: "Success"});
     }
 
     const project = await getProjectById(id as string);
     if (!project) {
-      return res.status(404).json({ error: "Project not found" });
+      return res.status(404).json({ message: "Project not found" });
     }
 
     const members = project.members;
@@ -47,9 +47,9 @@ export default async function handler(
 
     Promise.all(memberDataPromises).then((data) => {
       if (data) {
-        return res.status(200).json({ ...project, members: data });
+        return res.status(200).json({ data: {...project, members: data}, message: "Success" });
       }
-      return res.status(500).json({ error: "Something is wrong" });
+      return res.status(500).json({ message: "Something is wrong" });
     });
   }
 }
