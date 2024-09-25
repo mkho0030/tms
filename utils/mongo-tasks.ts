@@ -22,7 +22,8 @@ export const addTaskToProject = async (
   taskName: string,
   dueDate: string,
   assignees?: string[],
-  description?: string
+  description?: string,
+  parentId?: string
 ): Promise<TaskType> => {
 	const task: TaskType = {
 		_id: uuidv4(),
@@ -33,7 +34,8 @@ export const addTaskToProject = async (
 		assignees: assignees || [],
 		children: [],
 		status: 0,
-		projectId: projectId
+		projectId: projectId,
+    ...(parentId && {taskParentId: parentId})
 	}  
 
   const client = await clientPromise;
@@ -48,38 +50,26 @@ export const addTaskToProject = async (
   const taskCol = db.collection<TaskType>("TaskData");
   await taskCol.insertOne(task);
 
+  if (parentId) await addSubtaskToTask(parentId, task);
+
   return task;
 };
 
 export const addSubtaskToTask = async (
-  taskId: string,
-  subtaskName: string
+  parentId: string,
+  task: TaskType
 ): Promise<boolean> => {
   const client = await clientPromise;
   const db = client.db(process.env.DB_NAME || "TMS");
   const col = db.collection<TaskType>("TaskData");
-  const parent = await col.findOne({ _id: taskId });
+  const parent = await col.findOne({ _id: parentId });
 
   if (!parent) {
     return false;
   }
-  const parentProjectId = parent.projectId;
-
-  const task: TaskType = {
-    _id: uuidv4(),
-    name: subtaskName,
-    definition: "Put your task details here.",
-    startDate: new Date(),
-    endDate: new Date(),
-    assignees: [],
-    children: [],
-    status: 0,
-    projectId: parentProjectId,
-    taskParentId: taskId,
-  };
 
   const result = await col.updateOne(
-    { _id: taskId },
+    { _id: parentId },
     { $addToSet: { children: task._id } }
   );
 
@@ -142,18 +132,25 @@ export const deleteTaskFromProject = async (
   );
 
   const taskCol = db.collection<TaskType>("TaskData");
-  await taskCol.deleteOne({ _id: taskId });
+  const taskData = await taskCol.findOne({ _id: taskId });
 
-  // Delete the task from its parent's children array if it is a subtask
-  const parentTask = await taskCol.findOne({
-    children: { $elemMatch: { _id: taskId } },
-  });
+  //Delete all children -> Calls recusively
+  if(taskData?.children && taskData?.children.length > 0){
+    await Promise.all(taskData.children.map((childId) => {
+      deleteTaskFromProject(projectId, childId)
+    }))
+  }
+
+  // Check if there is a parent. If there is, remove
+  const parentTask = await taskCol.findOne({ _id: taskData?.taskParentId});
   if (parentTask) {
-    await taskCol.updateOne(
+     await taskCol.updateOne(
       { _id: parentTask._id },
-      { $pull: { children: { _id: taskId } } }
+      { $pull: { children: taskId } }
     );
   }
+
+  await taskCol.deleteOne({ _id: taskId });
 
   return result.matchedCount === 1;
 };

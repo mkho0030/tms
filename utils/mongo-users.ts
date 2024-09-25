@@ -1,5 +1,4 @@
 import clientPromise from "./mongodb";
-import { ProjectType } from "./mongo-projects";
 
 export type UserType = {
   uid: string;

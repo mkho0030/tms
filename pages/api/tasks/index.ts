@@ -20,7 +20,7 @@ export default async function handler(
 
   // create task
   if (req.method === "POST") {
-    const { project_id, name, dueDate, assignees, description } = JSON.parse(
+    const { project_id, name, dueDate, assignees, description, parentId } = JSON.parse(
       req.body
     );
     const newTask = await addTaskToProject(
@@ -28,7 +28,8 @@ export default async function handler(
       name,
       dueDate,
       assignees,
-      description
+      description,
+      parentId
     );
 
     return res.status(201).json({data: newTask, message: 'Task Created Successfully'});

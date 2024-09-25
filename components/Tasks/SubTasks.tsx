@@ -22,39 +22,19 @@ import { CreateTask } from "../Dialog/CreateTask";
 import { z } from "zod";
 import { createTaskSchema } from "../Form/taskSchemas";
 import { useTaskList } from "../../logics/providers/TaskListContext";
-import { TaskTypes } from "../../types/db-data";
-import { TaskType } from "../../utils/mongo-tasks";
-import { UserType } from "../../utils/mongo-users";
 
 const Subtasks: React.FC = () => {
   const [open, setOpen] = useState<string | null>(null);
   const router = useRouter();
 
-  const { isLoading, task, updateTask, refetchData } = useTask();
+  const { isLoading, task, refetchData } = useTask();
   const { submitCreateTaskForm } = useTaskList();
 
   const handleCreateSubTask = async (
     values: z.infer<typeof createTaskSchema>
   ) => {
-    // @ts-expect-error
-    const { data }: { data: TaskTypes } = await submitCreateTaskForm(values);
-
-    if (data as TaskTypes) {
-      await updateTask({
-        ...task,
-        assignees: task?.assignees.map(
-          (assigned) => (assigned as UserType).uid
-        ),
-
-        children: [
-          // @ts-expect-error
-          ...task?.children?.map((subTask) => (subTask as TaskTypes)._id),
-          data._id,
-        ],
-      } as TaskType);
-
-      refetchData();
-    }
+    const data = await submitCreateTaskForm({...values, parentId: task?._id});
+    refetchData();
   };
 
   return (
