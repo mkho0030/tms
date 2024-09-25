@@ -6,7 +6,8 @@ export const createTaskSchema = z.object({
   name: z.string().min(1, { message: "Field cannot be empty" }),
   dueDate: z.string().datetime({message: "Invalid date"}),
   assignees: z.string().array().optional(),
-  description: z.string().optional().or(z.literal(''))
+  description: z.string().optional().or(z.literal('')),
+  parentId: z.string().optional()
 });
 
 export const joinTeamSchema = z.object({

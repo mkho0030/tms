@@ -5,7 +5,6 @@ import { createTaskSchema } from "../../Form/taskSchemas";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import {
   Autocomplete,
   Avatar,

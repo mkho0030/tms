@@ -98,8 +98,8 @@ const FilterBar = ({ project }: { project?: ProjectTypes }) => {
               <ListItemAvatar sx={{ width: "28px", minWidth: "28px", mr: 1 }}>
                 <Avatar
                   sx={{ width: "28px", height: "28px" }}
-                  alt={member.name}
-                  src={member.photoUrl}
+                  alt={member?.name}
+                  src={member?.photoUrl}
                 />
               </ListItemAvatar>
               <ListItemText primary={member.name} />
