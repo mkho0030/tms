@@ -15,7 +15,7 @@ export default async function handler(
 ) {
   const uid = await getRequestUser(req);
   if (!uid) {
-    return res.status(401);
+    return res.status(401).json({ message: "Unauthorised Access" });
   }
 
   // create task

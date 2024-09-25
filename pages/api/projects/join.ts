@@ -8,19 +8,19 @@ export default async function handler(
 ) {
   const uid = await getRequestUser(req);
   if (!uid) {
-    return res.status(401);
+    return res.status(401).json({ message: "Unauthorised Access" });
   }
 
   if (req.method === "POST") {
     const { id } = JSON.parse(req.body);
 
     if (typeof id !== "string") {
-      return res.status(400).send({ message: "Invalid project ID" });
+      return res.status(400).json({ message: "Invalid project ID" });
     }
 
     const success = await addUserToProject(id, uid);
     if (!success) {
-      return res.status(500).send({ message: "Failed to join project" });
+      return res.status(500).json({ message: "Failed to join project" });
     }
 
     return res
