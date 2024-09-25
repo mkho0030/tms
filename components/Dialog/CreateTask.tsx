@@ -70,15 +70,13 @@ export const CreateTask = ({
       if (!res.ok) {
         throw new Error("Failed to fetch projects");
       }
-      const data = await res.json();
-      console.log(data);
+      const {data} = await res.json();
       return data;
     };
 
     fetchData()
       .then((res: ProjectTypes[]) => {
         if (projectId) {
-          console.log(projectId);
           const currentProj = res.find((proj) => proj._id == projectId);
           if (currentProj) {
             setProjects([currentProj]);
@@ -101,7 +99,7 @@ export const CreateTask = ({
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_APP_URL}/api/projects?id=${formControl.project_id}`
         );
-        const data = await res.json();
+        const {data} = await res.json();
         return data;
       };
 
@@ -117,6 +115,14 @@ export const CreateTask = ({
 
     return () => {};
   }, [formControl]);
+
+  useEffect(() => {
+    console.log(projects)
+  
+    return () => {
+    }
+  }, [projects])
+  
 
   return (
     <>
@@ -149,7 +155,7 @@ export const CreateTask = ({
               }
             >
               {projects &&
-                projects.map((proj, index) => (
+                projects?.map((proj, index) => (
                   <MenuItem key={index} value={proj._id}>
                     {proj.name}
                   </MenuItem>

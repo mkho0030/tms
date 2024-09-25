@@ -68,10 +68,6 @@ function ResponsiveAppBar({
             <OpenInNewIcon sx={{ mr: 1 }} />
             Copy Team Link
           </Button>
-          <Button sx={{ mx: 1 }} disabled={isLoading}>
-            <PersonAdd sx={{ mr: 1 }} />
-            Add New Member
-          </Button>
           <AvatarGroup max={4} spacing={"small"}>
             {isLoading
               ? ["", "", "", ""].map(() => (
