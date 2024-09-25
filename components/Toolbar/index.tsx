@@ -9,15 +9,10 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import {
   AvatarGroup,
   Skeleton,
-  ToggleButton,
-  ToggleButtonGroup,
 } from "@mui/material";
 import { ProjectTypes } from "../../types/db-data";
 import { useToast } from "../../logics/providers/ToastContext";
 import { PersonAdd } from "@mui/icons-material";
-
-import FormatAlignLeftIcon from "@mui/icons-material/FormatAlignLeft";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 
 function ResponsiveAppBar({
   isTask,
@@ -28,7 +23,6 @@ function ResponsiveAppBar({
   project?: ProjectTypes;
   isLoading?: boolean;
 }) {
-  const [view, setView] = useState<string | null>("list");
   const { setToast } = useToast();
 
   const handleCopyLink = () => {
@@ -86,7 +80,7 @@ function ResponsiveAppBar({
                     sx={{ width: 32, height: 32, marginLeft: '-8px' }}
                   ><Avatar/></Skeleton>
                 ))
-              : project?.members.map((member) => (
+              : project?.members?.map((member) => (
                   <Avatar
                     alt={member.name}
                     src={member.photoUrl}
@@ -96,20 +90,6 @@ function ResponsiveAppBar({
           </AvatarGroup>
         </Box>
       )}
-      {/* <ToggleButtonGroup
-        sx={{ ml: 1, color: "black" }}
-        aria-label="Basic button group"
-        value={view}
-        exclusive
-        onChange={(_, val) => setView(val)}
-      >
-        <ToggleButton value={"list"}>
-          <FormatAlignLeftIcon sx={{ color: "#2a2a2a" }} />
-        </ToggleButton>
-        <ToggleButton value={"calander"}>
-          <CalendarTodayIcon sx={{ color: "#2a2a2a" }} />
-        </ToggleButton>
-      </ToggleButtonGroup> */}
     </Toolbar>
   );
 }

@@ -18,12 +18,12 @@ export const generateICal = (events: ICalEvent[], name = "Grah") => {
   const strings = [
     "BEGIN:VCALENDAR",
     "PRODID:-//Grah//Grah Calendar 1.0//EN",
-    "VERSION:1.0",
+    "VERSION:2.0",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     `X-WR-CALNAME:${name}`,
     "X-WR-TIMEZONE:UTC",
-    `X-WR-CALDESC:Displays your events for ${name}.\n\nDon't add events to this calendar - use your personal calendar instead.`,
+    `X-WR-CALDESC:Displays your events for ${name}.`,
   ];
 
   const addEvent = (event: ICalEvent) => {

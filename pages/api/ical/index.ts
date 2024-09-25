@@ -29,7 +29,7 @@ export default async function handler(
   const events: ICalEvent[] = tasks.map((task) => {
     return {
       id: task._id,
-      datetime: task.endDate,
+      datetime: new Date(task.endDate),
       createdOn: new Date(),
       updatedOn: new Date(),
       name: task.name,

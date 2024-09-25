@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import useIsOpen from "../../logics/hooks/useIsOpen";
 import {
-  Autocomplete,
   Box,
   Button,
   Dialog,
@@ -12,7 +11,6 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  TextField,
 } from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
@@ -31,14 +29,16 @@ const CreateTeamDialog: React.FC<{}> = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const { control, handleSubmit, reset } = useForm<z.infer<typeof createTeamSchema>>({
+  const { control, handleSubmit, reset } = useForm<
+    z.infer<typeof createTeamSchema>
+  >({
     resolver: zodResolver(createTeamSchema),
   });
 
-  const handleOnClose = () =>{
+  const handleOnClose = () => {
     reset();
     handleClose();
-  }
+  };
 
   const onSubmit = async (values: z.infer<typeof createTeamSchema>) => {
     try {
@@ -57,8 +57,8 @@ const CreateTeamDialog: React.FC<{}> = () => {
           type: "success",
         });
 
-        const data = await res.json();
-        
+        const { data } = await res.json();
+
         reset();
         setIsLoading(false);
         handleClose();
@@ -93,12 +93,6 @@ const CreateTeamDialog: React.FC<{}> = () => {
             </Box>
           </DialogTitle>
           <DialogContent>
-            {/* <Autocomplete 
-              disablePortal
-              options={top100Films}
-              sx={{ width: 300 }}
-              renderInput={(params) => <TextField {...params} label="Movie" />}
-            /> */}
             <TextFieldElement
               fullWidth
               name="name"

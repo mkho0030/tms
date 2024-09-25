@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import {
+  Avatar,
+  AvatarGroup,
   Box,
   Checkbox,
   Paper,
+  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -11,44 +14,23 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import DropdownsAndButtons from "./DropdownsAndButtons";
 import TaskRow from "./TaskRow";
 
 import rows from "../../mock/tasks.json";
 import { InfoOutlined } from "@mui/icons-material";
+import { ProjectTypes } from "../../types/db-data";
+import { useTaskList } from "../../logics/providers/TaskListContext";
+import TableToolbar from "./TableToolbar";
 
-const TaskTable = () => {
-  const [selected, setSelected] = useState<readonly number[]>([]);
-
-  const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      const newSelected = rows.map((n) => n.id);
-      setSelected(newSelected);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: readonly number[] = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
-  };
-
-  const isSelected = (id: number) => selected.indexOf(id) !== -1;
+const TaskTable = ({ project }: { project?: ProjectTypes }) => {
+  const {
+    filteredList,
+    isLoading,
+    selected,
+    handleClick,
+    handleSelectAllClick,
+  } = useTaskList();
+  const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
   return (
     <Box
@@ -62,11 +44,16 @@ const TaskTable = () => {
       }}
     >
       <Paper
-        sx={{ height: "100%", mb: 2, display: "flex", flexDirection: "column" }}
+        sx={{
+          height: "100%",
+          mb: 2,
+          display: "flex",
+          flexDirection: "column",
+        }}
       >
-        <DropdownsAndButtons isSelected={selected.length > 0} />
-        <TableContainer sx={{ height: "100%" }}>
-          <Table sx={{ width: "calc(100% - 48px)", mx: 3 }}>
+        <TableToolbar project={project} isSelected={selected.length > 0} />
+        <TableContainer>
+          <Table sx={{ width: "calc(100% - 48px)", height: "100%", mx: 3 }}>
             <TableHead>
               <TableRow>
                 <TableCell padding="checkbox">
@@ -94,36 +81,78 @@ const TaskTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows && rows.length != 0 ? (
-                rows.map((row, index) => (
-                  <TaskRow
-                    key={index}
-                    tasks={row}
-                    handleChecked={handleClick}
-                    isSelected={isSelected}
-                  />
-                ))
+              {!isLoading ? (
+                filteredList && filteredList.length != 0 ? (
+                  filteredList.map((task, index) => (
+                    <TaskRow
+                      key={index}
+                      tasks={task}
+                      handleChecked={handleClick}
+                      isSelected={isSelected}
+                    />
+                  ))
+                ) : (
+                  // No task found
+                  <TableRow sx={{ height: "100%" }}>
+                    <TableCell colSpan={5}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          alignContent: "center",
+                          py: 20,
+                        }}
+                      >
+                        <InfoOutlined sx={{ height: 64, width: 64 }} />
+                        <Typography variant="h4" textAlign={"center"}>
+                          No Task found
+                        </Typography>
+                        <Typography variant="body1" textAlign={"center"}>
+                          Please add new task to start!
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                )
               ) : (
-                <TableRow sx={{ height: "100%" }}>
-                  <TableCell colSpan={5}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        alignContent: "center",
-                      }}
-                    >
-                      <InfoOutlined sx={{ height: 64, width: 64 }} />
-                      <Typography variant="h4" textAlign={"center"}>
-                        No Task found
+                // Loading
+                ["", "", "", ""].map(() => (
+                  <TableRow>
+                    <TableCell padding="checkbox">
+                      <Checkbox color="primary" disabled />
+                    </TableCell>
+                    <TableCell>
+                      <Typography>
+                        <Skeleton />
                       </Typography>
-                      <Typography variant="body1" textAlign={"center"}>
-                        Please add new task to start!
+                    </TableCell>
+                    <TableCell>
+                      <AvatarGroup
+                        max={4}
+                        spacing={"small"}
+                        sx={{ justifyContent: "flex-end" }}
+                      >
+                        {["", "", "", ""].map(() => (
+                          <Skeleton
+                            variant="circular"
+                            sx={{ width: 32, height: 32, marginLeft: "-8px" }}
+                          >
+                            <Avatar />
+                          </Skeleton>
+                        ))}
+                      </AvatarGroup>
+                    </TableCell>
+                    <TableCell>
+                      <Typography>
+                        <Skeleton />
                       </Typography>
-                    </Box>
-                  </TableCell>
-                </TableRow>
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton variant="rounded" width={120} height={24} />
+                    </TableCell>
+                  </TableRow>
+                ))
               )}
             </TableBody>
           </Table>

@@ -9,7 +9,12 @@ export default async function handler(
   if (req.method === "POST") {
     const { uid, name, email, photoUrl } = JSON.parse(req.body);
     await setUser({ uid, name, email, photoUrl });
-    return res.status(200).json({data: { uid, name, email, photoUrl }, message: "Success"});
+    return res
+      .status(200)
+      .json({
+        data: { uid, name, email, photoUrl },
+        message: "Updated user info",
+      });
   }
 
   // get user info, settings and notifications
@@ -22,6 +27,6 @@ export default async function handler(
     if (!user) {
       return res.status(404).send({ message: "User not found" });
     }
-    return res.status(200).json({data: {...user}});
+    return res.status(200).json({ data: { ...user }, message: "Success" });
   }
 }

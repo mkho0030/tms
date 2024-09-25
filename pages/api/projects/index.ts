@@ -1,10 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { getRequestUser } from "../../../utils/auth-utils";
-import { getProjectsForUser, getUser } from "../../../utils/mongo-users";
+import { getUser } from "../../../utils/mongo-users";
 import {
   addUserToProject,
   createProject,
   getProjectById,
+  getProjectsForUser,
 } from "../../../utils/mongo-projects";
 
 export default async function handler(
@@ -19,11 +20,13 @@ export default async function handler(
   // create team
   if (req.method === "POST") {
     const { name } = JSON.parse(req.body);
-
+    console.log("Function called, name:", name);
     const newProject = await createProject(name);
     await addUserToProject(newProject._id, uid);
 
-    return res.status(201).json({data: newProject, message: "Success"});
+    return res
+      .status(201)
+      .json({ data: newProject, message: "Project created" });
   }
 
   // get teams that user belongs to
@@ -46,8 +49,11 @@ export default async function handler(
     var memberData: any = [];
 
     Promise.all(memberDataPromises).then((data) => {
-      if (data) {
-        return res.status(200).json({ data: {...project, members: data}, message: "Success" });
+      if (data.every(Boolean)) {
+        // filter out null values
+        return res
+          .status(200)
+          .json({ data: { ...project, members: data }, message: "Success" });
       }
       return res.status(500).json({ message: "Something is wrong" });
     });

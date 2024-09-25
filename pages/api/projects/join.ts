@@ -13,7 +13,7 @@ export default async function handler(
 
   if (req.method === "POST") {
     const { id } = JSON.parse(req.body);
-    
+
     if (typeof id !== "string") {
       return res.status(400).json({ message: "Invalid project ID" });
     }
@@ -23,6 +23,8 @@ export default async function handler(
       return res.status(500).json({ message: "Failed to join project" });
     }
 
-    return res.status(200).json({data: id}); // TODO: Replace / with path to correct project page
+    return res
+      .status(200)
+      .json({ data: { id: id }, message: "Joined project" }); // TODO: Replace / with path to correct project page
   }
 }
