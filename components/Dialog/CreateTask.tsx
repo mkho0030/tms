@@ -77,7 +77,6 @@ export const CreateTask = ({
     fetchData()
       .then((res: ProjectTypes[]) => {
         if (projectId) {
-          console.log(projectId);
           const currentProj = res.find((proj) => proj._id == projectId);
           if (currentProj) {
             setProjects([currentProj]);
@@ -117,6 +116,14 @@ export const CreateTask = ({
     return () => {};
   }, [formControl]);
 
+  useEffect(() => {
+    console.log(projects)
+  
+    return () => {
+    }
+  }, [projects])
+  
+
   return (
     <>
       <Box
@@ -148,7 +155,7 @@ export const CreateTask = ({
               }
             >
               {projects &&
-                projects.map((proj, index) => (
+                projects?.map((proj, index) => (
                   <MenuItem key={index} value={proj._id}>
                     {proj.name}
                   </MenuItem>

@@ -13,7 +13,7 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { Notifications, Settings, Logout } from "@mui/icons-material";
+import {  Logout } from "@mui/icons-material";
 import { useAuth } from "../../logics/providers/AuthContext";
 
 const CustomAppBar = () => {
@@ -46,10 +46,6 @@ const CustomAppBar = () => {
           justifyContent: "end",
         }}
       >
-        {/* Notification bell */}
-        <IconButton size="large">
-          <Notifications />
-        </IconButton>
         {/* Account */}
         <IconButton onClick={handleOnClick}>
           <Avatar sx={{ width: 32, height: 32 }} src={user?.photoURL || ""} />
@@ -87,12 +83,6 @@ const CustomAppBar = () => {
           <ListItemText primary={user?.displayName} secondary={user?.email} />
         </ListItem>
         <MenuList>
-          <MenuItem onClick={handleClose}>
-            <ListItemText primary="Manage Account" />
-            <ListItemIcon>
-              <Settings />
-            </ListItemIcon>
-          </MenuItem>
           <Divider />
           <MenuItem onClick={handleLogout}>
             <ListItemText primary="Logout" />

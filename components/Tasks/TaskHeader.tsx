@@ -99,10 +99,10 @@ const TaskHeader: React.FC<{}> = () => {
       </Box>
 
       <Box display="flex" gap="20px">
-        <Button variant="text" color="primary" disabled={isLoading} onClick={generateIcal}>
+        {/* <Button variant="text" color="primary" disabled={isLoading} onClick={generateIcal}>
           <CalendarTodayIcon sx={{ marginRight: "8px" }} />
           Add to calendar
-        </Button>
+        </Button> */}
         <Button
           variant="text"
           color="error"
