@@ -46,6 +46,7 @@ const LinkTask = ({ handleClose }: { handleClose: () => void }) => {
   const handleOnSubmit = async (e: any) => {
     e.preventDefault();
     try {
+      // Update parentTask
       await updateTask({
         ...task,
         // @ts-expect-error
@@ -59,6 +60,25 @@ const LinkTask = ({ handleClose }: { handleClose: () => void }) => {
           e.target.childTask.value,
         ],
       });
+      
+      const childTaskRes = await fetch(
+        `${process.env.NEXT_PUBLIC_APP_URL}/api/tasks?id=${e.target.childTask.value}`
+      );
+
+      const { data } = await childTaskRes.json();
+      console.log(data)
+      await updateTask({
+        ...data,
+         // @ts-expect-error
+        assignees: data?.assignees.map((assigned) => (assigned as UserType).uid
+        ),
+        children: [
+          // @ts-expect-error
+          ...data?.children?.map((subTask) => (subTask as TaskTypes)._id)
+        ],
+        taskParentId: task?._id
+      });
+
       handleClose();
       refetchData();
     } catch (error) {
