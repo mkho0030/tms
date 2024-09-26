@@ -33,7 +33,7 @@ const Subtasks: React.FC = () => {
   const handleCreateSubTask = async (
     values: z.infer<typeof createTaskSchema>
   ) => {
-    const data = await submitCreateTaskForm({...values, parentId: task?._id});
+    await submitCreateTaskForm({...values, parentId: task?._id});
     refetchData();
   };
 
