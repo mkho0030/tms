@@ -47,6 +47,7 @@ const CustomAppBar = () => {
         message: "Link copied to clipboard",
         type: "success",
       });
+      handleClose();
     }
   };
 
