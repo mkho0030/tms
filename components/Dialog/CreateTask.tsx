@@ -1,4 +1,4 @@
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { ProjectTypes } from "../../types/db-data";
 import { Controller, useForm } from "react-hook-form";
 import { createTaskSchema } from "../Form/taskSchemas";
@@ -116,14 +116,6 @@ export const CreateTask = ({
     return () => {};
   }, [formControl]);
 
-  useEffect(() => {
-    console.log(projects)
-  
-    return () => {
-    }
-  }, [projects])
-  
-
   return (
     <>
       <Box
@@ -182,6 +174,8 @@ export const CreateTask = ({
                     onChange={(value) =>
                       setFormControl({ ...formControl, dueDate: value })
                     }
+                    minDate={dayjs()}
+                    format="DD-MM-YYYY"
                     value={formControl.dueDate}
                     label="Due date"
                     name="endDate"
