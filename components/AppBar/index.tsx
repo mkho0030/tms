@@ -13,11 +13,13 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import {  Logout } from "@mui/icons-material";
+import { Logout, CalendarMonth } from "@mui/icons-material";
 import { useAuth } from "../../logics/providers/AuthContext";
+import { useToast } from "../../logics/providers/ToastContext";
 
 const CustomAppBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { setToast } = useToast();
 
   const handleOnClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget as HTMLElement);
@@ -34,6 +36,19 @@ const CustomAppBar = () => {
   const handleLogout = () => {
     handleClose();
     signOutUser();
+  };
+
+  const handleIcal = async () => {
+    const result = await fetch("/api/ical/generate");
+    if (result.ok) {
+      const { data } = await result.json();
+      navigator.clipboard.writeText(data);
+      setToast({
+        message: "Link copied to clipboard",
+        type: "success",
+      });
+      handleClose();
+    }
   };
 
   return (
@@ -84,6 +99,12 @@ const CustomAppBar = () => {
         </ListItem>
         <MenuList>
           <Divider />
+          <MenuItem onClick={handleIcal}>
+            <ListItemText primary="Copy iCal link" />
+            <ListItemIcon>
+              <CalendarMonth />
+            </ListItemIcon>
+          </MenuItem>
           <MenuItem onClick={handleLogout}>
             <ListItemText primary="Logout" />
             <ListItemIcon>
