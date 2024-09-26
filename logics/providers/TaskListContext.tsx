@@ -37,6 +37,7 @@ interface TaskTableContextType {
   taskList: TaskTypes[] | undefined;
   filteredList: TaskTypes[] | undefined;
   projectData: ProjectTypes | undefined;
+  refetchList: () => void;
 
   //selected Task for processing
   selected: string[];
@@ -68,6 +69,7 @@ const initialState = {
   taskList: [],
   filteredList: [],
   projectData: undefined,
+  refetchList: () => {},
   selected: [],
   handleClick: () => {},
   handleSelectAllClick: () => {},
@@ -97,61 +99,53 @@ export const TaskListProvider: React.FC<{
 
   const [selected, setSelected] = useState<string[]>([]);
 
-  // Fetch Tasks
-  useEffect(() => {
+  const fetchTaskData = async (teamId?: string | string[]) => {
+    const apiLink = teamId
+      ? `${process.env.NEXT_PUBLIC_APP_URL}/api/tasks?projectId=${teamId}`
+      : `${process.env.NEXT_PUBLIC_APP_URL}/api/tasks`;
+
+    const res = await fetch(apiLink, {
+      method: "GET",
+    });
+    const { data } = await res.json();
+    return data;
+  };
+
+  const fetchProjectData = async (teamId?: string | string[]) => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_APP_URL}/api/projects?id=${teamId}`
+    );
+    const { data } = await res.json();
+    console.log(data);
+    return data;
+  };
+
+  const refetchList = () => {
     setIsLoading(true);
     const pagePath = router.pathname.split("/");
     if (pagePath[1] === "teams") {
       const { teamId, taskId } = router.query;
 
-      const fetchTaskData = async () => {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_APP_URL}/api/tasks?projectId=${teamId}`,
-          {
-            method: "GET",
-          }
-        );
-        const { data } = await res.json();
-        return data;
-      };
-
-      const fetchProjectData = async () => {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_APP_URL}/api/projects?id=${teamId}`
-        );
-        const {data} = await res.json();
-        console.log(data);
-        return data;
-      };
-
-      fetchTaskData().then((data) => {
+      fetchTaskData(teamId).then((data) => {
         setTaskList(data);
-        fetchProjectData().then((data) => {
+        fetchProjectData(teamId).then((data) => {
           setProjectData(data);
           setIsLoading(false);
           setFilters(initialState.filters);
         });
       });
-    }
-    else {
-      const fetchData = async () => {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_APP_URL}/api/tasks`,
-          {
-            method: "GET",
-          }
-        );
-        const { data } = await res.json();
-        return data;
-      };
-
-      fetchData().then((data) => {
+    } else {
+      fetchTaskData().then((data) => {
         setTaskList(data);
         setIsLoading(false);
         setFilters(initialState.filters);
       });
     }
+  };
 
+  // Fetch Tasks
+  useEffect(() => {
+    refetchList();
     return () => {};
   }, [router]);
 
@@ -165,13 +159,13 @@ export const TaskListProvider: React.FC<{
     }
 
     if (filters.assigned.length != 0) {
-      filters.assigned.map((selectedAssignees) => {
-        list = list?.filter((task) =>
-          task.assignees.some(
-            (assignees) => assignees.uid == selectedAssignees.uid
+      list = list?.filter((task) =>
+        task.assignees.some((assignee) => 
+          filters.assigned.some(
+            (selectedAssignee) => assignee.uid === selectedAssignee.uid
           )
-        );
-      });
+        )
+      );
     }
 
     if (filters.dueBy != 0) {
@@ -258,10 +252,8 @@ export const TaskListProvider: React.FC<{
         type: "success",
       });
 
-      const { data } = await res.json();
-      return data;
-      // setIsLoading(false);
-      // router.reload();
+      setIsLoading(false);
+      refetchList();
     }
   };
 
@@ -283,11 +275,15 @@ export const TaskListProvider: React.FC<{
           message: "Tasks status updated!",
           type: "success",
         });
-        router.reload();
+        setSelected([]);
+        refetchList();
       }
-
-      console.log(res);
-    } catch (error) {}
+    } catch (error: any) {
+      setToast({
+        message: error.message || "Error has occured",
+        type: "error",
+      })
+    }
   };
 
   const deleteTasks = async (tasksIds: string[]) => {
@@ -307,11 +303,15 @@ export const TaskListProvider: React.FC<{
           message: "Tasks deleted!",
           type: "success",
         });
-        router.reload();
+        setSelected([]);
+        refetchList();
       }
-
-      console.log(res);
-    } catch (error) {}
+    } catch (error: any) {
+      setToast({
+        message: error.message || "Error has occured",
+        type: "error",
+      })
+    }
   };
 
   const value = {
@@ -327,6 +327,7 @@ export const TaskListProvider: React.FC<{
     updateStatus,
     submitCreateTaskForm,
     deleteTasks,
+    refetchList
   };
 
   return (
