@@ -37,5 +37,5 @@ export default async function handler(
     };
   });
   const icalString = generateICal(events);
-  return res.status(200).json({ data: icalString, message: "Success" });
+  return res.status(200).send(icalString); // this must be a raw string (consumed by external apps)
 }
