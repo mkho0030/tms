@@ -60,7 +60,7 @@ const AppDrawer: React.FC = () => {
         >
           <Logo />
         </Toolbar>
-        {/* My Task */}
+        {/* My Tasks */}
         <List>
           <ListItemButton
             selected={router.pathname.startsWith("/tasks")}
@@ -69,7 +69,7 @@ const AppDrawer: React.FC = () => {
             <ListItemIcon>
               <ContentPasteIcon />
             </ListItemIcon>
-            <ListItemText>My Task</ListItemText>
+            <ListItemText>My Tasks</ListItemText>
           </ListItemButton>
         </List>
         {/* Project List */}
