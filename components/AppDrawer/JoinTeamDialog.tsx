@@ -77,7 +77,7 @@ const JoinTeamDialog: React.FC = () => {
         <ListItemIcon>
           <OpenInNew />
         </ListItemIcon>
-        <ListItemText>Join existing Team</ListItemText>
+        <ListItemText>Join existing team</ListItemText>
       </ListItemButton>
 
       <Dialog
