@@ -75,7 +75,7 @@ const CreateTeamDialog: React.FC<{}> = () => {
         <ListItemIcon>
           <Add />
         </ListItemIcon>
-        <ListItemText>Create new Team</ListItemText>
+        <ListItemText>Create new team</ListItemText>
       </ListItemButton>
       <Dialog open={isOpen} onClose={handleOnClose} maxWidth="sm" fullWidth>
         <Box
@@ -86,7 +86,7 @@ const CreateTeamDialog: React.FC<{}> = () => {
         >
           <DialogTitle>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-              Create New Team
+              Create new team
               <IconButton onClick={handleOnClose}>
                 <Close />
               </IconButton>
