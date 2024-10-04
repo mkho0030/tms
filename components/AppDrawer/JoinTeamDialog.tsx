@@ -77,7 +77,7 @@ const JoinTeamDialog: React.FC = () => {
         <ListItemIcon>
           <OpenInNew />
         </ListItemIcon>
-        <ListItemText>Join existing team</ListItemText>
+        <ListItemText>Join existing project</ListItemText>
       </ListItemButton>
 
       <Dialog
@@ -92,7 +92,7 @@ const JoinTeamDialog: React.FC = () => {
       >
         <DialogTitle>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            Join existing team
+            Join existing project
             <IconButton onClick={handleClose}>
               <Close />
             </IconButton>
@@ -110,7 +110,7 @@ const JoinTeamDialog: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button variant="text" type="submit" disabled={loading}>
-            Join team
+            Join project
           </Button>
         </DialogActions>
       </Dialog>
